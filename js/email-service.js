@@ -445,7 +445,7 @@ class EmailService {
             return `file://${basePath}/verify-email.html?email=${encodeURIComponent(userEmail)}&token=${token}`;
         } else {
             // For production, use the actual domain
-            const baseUrl = window.location.origin;
+            const baseUrl = `https://${WaxEncounters}.github.io/vinyl-main`;
             return `${baseUrl}/verify-email.html?email=${encodeURIComponent(userEmail)}&token=${token}`;
         }
     }
