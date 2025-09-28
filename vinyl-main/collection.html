@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection - Wax Encounters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Security Scripts -->
+    <script src="js/security.js"></script>
+    <script src="js/secure-storage.js"></script>
+    <script src="js/server-validation.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+        .glass-nav { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .premium-button { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .premium-button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2); }
+        .text-overlay { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 2rem; border: 1px solid rgba(199, 122, 180, 0.2); }
+        .main-background { position: fixed; top: 0; left: 0; right: 0; height: 200vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/background image.jpeg'); background-size: cover; background-position: center top; background-repeat: no-repeat; z-index: -1; }
+        .luxury-card { background: linear-gradient(135deg, rgba(9, 10, 8, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%); backdrop-filter: blur(30px); border: 1px solid rgba(199, 122, 180, 0.2); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(199, 122, 180, 0.05) inset; }
+        .shimmer-effect { position: relative; overflow: hidden; }
+        .shimmer-effect::after { content: ''; position: absolute; top: 0; left: -150%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent); transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .shimmer-effect:hover::after { left: 150%; }
+        .section-fade { opacity: 0; transform: translateY(40px); transition: opacity 1.2s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .section-fade.visible { opacity: 1; transform: translateY(0); }
+    </style>
+    <link rel="icon" href="data:,">
+    <script src="js/purchase-tracker.js"></script>
+</head>
+<body class="text-white overflow-x-hidden">
+    <div class="main-background"></div>
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-xl font-bold tracking-wider">WAX ENCOUNTERS</a>
+                    </div>
+                </div>
+                <!-- Desktop Navigation -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
+                        <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
+                        <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
+                        <a href="collection.html" class="text-pink-400 font-semibold">Collection</a>
+                        <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
+                        <a href="login.html" id="loginNavLink" class="hover:text-gray-300 transition-colors duration-200">Log In</a>
+                        <a href="account.html" id="accountNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">My Account</a>
+                        <a href="#" id="logoutNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">Log Out</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" id="mobile-menu-button" class="text-gray-300 hover:text-white focus:outline-none focus:text-white">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu panel -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black bg-opacity-90 backdrop-filter backdrop-blur-lg border-t border-white border-opacity-10">
+                <a href="index.html#hero" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Home</a>
+                <a href="about.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">About Us</a>
+                <a href="print.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                <a href="supportarecord.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Support a Record</a>
+                <a href="collection.html" class="block px-3 py-2 text-base font-medium text-pink-400">Collection</a>
+                <a href="contact.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Contact</a>
+                <a href="login.html" id="mobileLoginNavLink" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Log In</a>
+                <a href="account.html" id="mobileAccountNavLink" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200 hidden">My Account</a>
+                <a href="#" id="mobileLogoutNavLink" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200 hidden">Log Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="min-h-screen pt-16 sm:pt-24">
+        <section class="relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <div class="text-overlay inline-block">
+                        <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 tracking-tight">
+                            These vinyls made it!
+                        </h1>
+                        <p class="text-lg text-gray-300 mb-2">
+                            They have been pressed thanks to fans support.
+                        </p>
+                        <p class="text-lg text-gray-300">
+                            They are directly available to be shipped.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="collectionGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    <!-- Records will be loaded dynamically here -->
+                </div>
+
+                <!-- Call to Action -->
+                <div class="text-center mt-16">
+                    <div class="luxury-card rounded-3xl p-8 lg:p-12 max-w-4xl mx-auto section-fade">
+                        <h2 class="text-3xl sm:text-4xl font-bold mb-6">Want to see your vinyl here?</h2>
+                        <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                            Launch your own crowdfunding campaign and join the artists who have successfully brought their music to vinyl.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="print.html" class="premium-button px-8 py-4 text-black font-semibold rounded-xl text-lg">
+                                Start Your Campaign
+                            </a>
+                            <a href="supportarecord.html" class="glass-card px-8 py-4 rounded-xl hover:bg-white hover:bg-opacity-10 transition-all duration-300 text-lg">
+                                Support Other Artists
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Intersection Observer for section animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all animated elements
+        document.querySelectorAll('.section-fade').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Function to view collection product detail
+        function viewCollectionProductDetail(recordId) {
+            window.location.href = `collection-product-detail.html?id=${recordId}`;
+        }
+
+        // Load collection records
+        function loadCollectionRecords() {
+            const collectionGrid = document.getElementById('collectionGrid');
+            
+            // Get uploaded records from localStorage
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            
+            // Filter immediate sale records (available for collection)
+            const immediateRecords = records.filter(record => 
+                record.type === 'immediate' && 
+                record.status === 'available' && 
+                record.quantity > 0
+            );
+            
+            if (immediateRecords.length === 0) {
+                // No uploaded records found - show empty state
+                console.log('No immediate sale records found, showing empty state');
+                collectionGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="glass-card rounded-2xl p-8 max-w-md mx-auto">
+                            <h3 class="text-2xl font-bold mb-4">No Records Available</h3>
+                            <p class="text-gray-300 mb-6">Check back soon for new vinyl releases!</p>
+                            <a href="supportarecord.html" class="premium-button px-6 py-3 rounded-xl text-black font-semibold hover:scale-105 transition-transform duration-200 inline-block">
+                                Support a Record
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Display uploaded records with compact layout variations
+            collectionGrid.innerHTML = immediateRecords.map((record, index) => {
+                // Create layout variations like the Support a Record page
+                const layouts = [
+                    { card: 'rounded-lg p-3', cover: 'rounded-md mb-3', title: 'text-sm', button: 'px-3 py-1.5' },
+                    { card: 'rounded-lg p-3', cover: 'rounded-md mb-3', title: 'text-sm', button: 'px-4 py-2' },
+                    { card: 'rounded-xl p-4', cover: 'rounded-lg mb-4', title: 'text-lg', button: 'px-4 py-2' }
+                ];
+                
+                const layout = layouts[index % layouts.length];
+                
+                return `
+                    <div class="luxury-card ${layout.card} section-fade shimmer-effect hover:scale-105 transition-transform duration-500" style="transition-delay: ${index * 100}ms;">
+                        <div class="aspect-square album-cover ${layout.cover} relative overflow-hidden cursor-pointer" onclick="viewCollectionProductDetail('${record.id}')">
+                            <img src="${record.coverImage || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'}" 
+                                 alt="${record.albumTitle}" 
+                                 class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="${layout.title} font-semibold mb-1">${record.albumTitle}</h3>
+                        <p class="text-gray-400 mb-1 text-xs">by ${record.artistName}</p>
+                        <p class="text-gray-400 mb-3 text-xs leading-relaxed">${record.description || 'A beautiful vinyl record ready for immediate shipping.'}</p>
+                        
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="${layout.title} font-bold">€${record.price}</span>
+                            <span class="text-xs text-green-400 font-semibold">
+                                ${record.quantity} in stock
+                            </span>
+                        </div>
+                        
+                        <a href="payment.html?type=direct&recordId=${record.id}" class="premium-button w-full ${layout.button} text-black font-semibold rounded-md text-xs mb-1 inline-block text-center">
+                            Order Now
+                        </a>
+                        <a href="#" class="block text-center text-gray-400 hover:text-white transition-colors duration-200 text-xs">
+                            Listen on Spotify
+                        </a>
+                    </div>
+                `;
+            }).join('');
+            
+            // Re-observe elements for animations
+            document.querySelectorAll('.section-fade').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Load sample records if no uploaded records exist
+        function loadSampleCollectionRecords() {
+            const collectionGrid = document.getElementById('collectionGrid');
+            
+            const sampleRecords = [
+                {
+                    id: 'sample-1',
+                    albumTitle: 'Neon Dreams',
+                    artistName: 'Cyber Pulse',
+                    description: 'Retro-futuristic synthwave with neon-soaked melodies and 80s vibes.',
+                    price: 45,
+                    genre: '180g Premium',
+                    quantity: 25
+                },
+                {
+                    id: 'sample-2',
+                    albumTitle: 'Acoustic Soul Stories',
+                    artistName: 'Emma Rivers',
+                    description: 'Intimate folk melodies with heartfelt storytelling and acoustic guitar.',
+                    price: 32,
+                    genre: '180g Premium',
+                    quantity: 18
+                },
+                {
+                    id: 'sample-3',
+                    albumTitle: 'Electric Youth',
+                    artistName: 'The Wild Hearts',
+                    description: 'Raw indie rock with powerful vocals and energetic guitar riffs.',
+                    price: 40,
+                    genre: '180g Premium',
+                    quantity: 12
+                }
+            ];
+            
+            collectionGrid.innerHTML = sampleRecords.map((record, index) => {
+                // Create layout variations like the Support a Record page
+                const layouts = [
+                    { card: 'rounded-lg p-3', cover: 'rounded-md mb-3', title: 'text-sm', button: 'px-3 py-1.5' },
+                    { card: 'rounded-lg p-3', cover: 'rounded-md mb-3', title: 'text-sm', button: 'px-4 py-2' },
+                    { card: 'rounded-xl p-4', cover: 'rounded-lg mb-4', title: 'text-lg', button: 'px-4 py-2' }
+                ];
+                
+                const layout = layouts[index % layouts.length];
+                
+                return `
+                    <div class="luxury-card ${layout.card} section-fade shimmer-effect hover:scale-105 transition-transform duration-500" style="transition-delay: ${index * 100}ms;">
+                        <div class="aspect-square album-cover ${layout.cover} relative overflow-hidden cursor-pointer" onclick="viewCollectionProductDetail('${record.id}')">
+                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                 alt="${record.albumTitle}" 
+                                 class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="${layout.title} font-semibold mb-1">${record.albumTitle}</h3>
+                        <p class="text-gray-400 mb-1 text-xs">by ${record.artistName}</p>
+                        <p class="text-gray-400 mb-3 text-xs leading-relaxed">${record.description}</p>
+                        
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="${layout.title} font-bold">€${record.price}</span>
+                            <span class="text-xs text-green-400 font-semibold">
+                                ${record.quantity} in stock
+                            </span>
+                        </div>
+                        
+                        <a href="payment.html?type=direct&recordId=${record.id}" class="premium-button w-full ${layout.button} text-black font-semibold rounded-md text-xs mb-1 inline-block text-center">
+                            Order Now
+                        </a>
+                        <a href="#" class="block text-center text-gray-400 hover:text-white transition-colors duration-200 text-xs">
+                            Listen on Spotify
+                        </a>
+                    </div>
+                `;
+            }).join('');
+            
+            // Re-observe elements for animations
+            document.querySelectorAll('.section-fade').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Navigation state management
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigationState();
+            
+            // Clear sample records from localStorage
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            const filteredRecords = records.filter(record => !record.id.startsWith('sample-'));
+            if (filteredRecords.length !== records.length) {
+                localStorage.setItem('uploadedRecords', JSON.stringify(filteredRecords));
+                console.log('Sample records cleared from localStorage');
+            }
+            
+            loadCollectionRecords();
+        });
+
+        function updateNavigationState() {
+            const loginNavLink = document.getElementById('loginNavLink');
+            const accountNavLink = document.getElementById('accountNavLink');
+            const logoutNavLink = document.getElementById('logoutNavLink');
+            const mobileLoginNavLink = document.getElementById('mobileLoginNavLink');
+            const mobileAccountNavLink = document.getElementById('mobileAccountNavLink');
+            const mobileLogoutNavLink = document.getElementById('mobileLogoutNavLink');
+            
+            if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
+                // User is logged in
+                if (loginNavLink) loginNavLink.classList.add('hidden');
+                if (accountNavLink) accountNavLink.classList.remove('hidden');
+                if (logoutNavLink) logoutNavLink.classList.remove('hidden');
+                if (mobileLoginNavLink) mobileLoginNavLink.classList.add('hidden');
+                if (mobileAccountNavLink) mobileAccountNavLink.classList.remove('hidden');
+                if (mobileLogoutNavLink) mobileLogoutNavLink.classList.remove('hidden');
+            } else {
+                // User is not logged in
+                if (loginNavLink) loginNavLink.classList.remove('hidden');
+                if (accountNavLink) accountNavLink.classList.add('hidden');
+                if (logoutNavLink) logoutNavLink.classList.add('hidden');
+                if (mobileLoginNavLink) mobileLoginNavLink.classList.remove('hidden');
+                if (mobileAccountNavLink) mobileAccountNavLink.classList.add('hidden');
+                if (mobileLogoutNavLink) mobileLogoutNavLink.classList.add('hidden');
+            }
+        }
+
+        // Logout functionality and mobile menu
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.getElementById('logoutNavLink');
+            const mobileLogoutButton = document.getElementById('mobileLogoutNavLink');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            // Handle mobile menu toggle
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Handle mobile logout
+            if (mobileLogoutButton) {
+                mobileLogoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to log out?')) {
+                        // Clear session data
+                        localStorage.removeItem('adminSession');
+                        localStorage.removeItem('userSession');
+                        localStorage.removeItem('isLoggedIn');
+                        localStorage.removeItem('loginStatus');
+                        // Note: We keep accountVerified to avoid re-verification
+                        
+                        // Update navigation state
+                        updateNavigationState();
+                        
+                        // Close mobile menu
+                        if (mobileMenu) mobileMenu.classList.add('hidden');
+                        
+                        alert('You have been logged out successfully.');
+                    }
+                });
+            }
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Confirm logout
+                    if (confirm('Are you sure you want to log out?')) {
+                        // Clear session data
+                        if (window.SecureStorageManager) {
+                            window.SecureStorageManager.clearSession();
+                        }
+                        
+                        // Clear any other stored data (but preserve account verification for local testing)
+                        localStorage.removeItem('userData');
+                        localStorage.removeItem('sessionId');
+                        localStorage.removeItem('verificationToken');
+                        localStorage.removeItem('pendingVerificationEmail');
+                        
+                        // Preserve account verification status (both local and production)
+                        // Users shouldn't need to re-verify after every logout
+                        console.log('Preserving account verification status for better UX');
+                        // Don't remove accountVerified and verifiedEmail
+                        
+                        // Log security event
+                        if (window.ServerValidation) {
+                            window.ServerValidation.logSecurityEvent('user_logout', {
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                        
+                        // Redirect to homepage
+                        alert('You have been logged out successfully.');
+                        window.location.href = 'index.html';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+

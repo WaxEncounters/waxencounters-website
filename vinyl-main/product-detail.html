@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail - Wax Encounters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Security Scripts -->
+    <script src="js/security.js"></script>
+    <script src="js/secure-storage.js"></script>
+    <script src="js/server-validation.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+        .glass-nav { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .premium-button { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .premium-button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2); }
+        .main-background { position: fixed; top: 0; left: 0; right: 0; height: 200vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/background image.jpeg'); background-size: cover; background-position: center top; background-repeat: no-repeat; z-index: -1; }
+        .luxury-card { background: linear-gradient(135deg, rgba(9, 10, 8, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%); backdrop-filter: blur(30px); border: 1px solid rgba(199, 122, 180, 0.2); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(199, 122, 180, 0.05) inset; }
+        .shimmer-effect { position: relative; overflow: hidden; }
+        .shimmer-effect::after { content: ''; position: absolute; top: 0; left: -150%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent); transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .shimmer-effect:hover::after { left: 150%; }
+        .section-fade { opacity: 0; transform: translateY(40px); transition: opacity 1.2s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .section-fade.visible { opacity: 1; transform: translateY(0); }
+        .progress-bar { background: linear-gradient(90deg, #c77ab0 0%, #8b5cf6 50%, #06b6d4 100%); }
+        .status-funded { background: linear-gradient(135deg, #10b981, #059669); }
+        .status-pending { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .status-refunded { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .status-badge { @apply px-3 py-1 rounded-full text-xs font-semibold text-white; }
+    </style>
+    <link rel="icon" href="data:,">
+</head>
+<body class="text-white overflow-x-hidden">
+    <div class="main-background"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-xl font-bold tracking-wider">WAX ENCOUNTERS</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
+                        <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
+                        <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
+                        <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
+                        <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
+                        <a href="login.html" id="loginNavLink" class="hover:text-gray-300 transition-colors duration-200">Log In</a>
+                        <a href="account.html" id="accountNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">My Account</a>
+                        <a href="#" id="logoutNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="min-h-screen pt-24">
+        <section class="relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Back Button -->
+                <div class="mb-8">
+                    <a href="supportarecord.html" class="inline-flex items-center text-pink-400 hover:text-pink-300 transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Back to Support a Record
+                    </a>
+                </div>
+
+                <!-- Product Detail Content -->
+                <div id="productDetail" class="luxury-card rounded-3xl p-6 section-fade">
+                    <!-- Loading State -->
+                    <div id="loadingState" class="text-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-400 mx-auto mb-4"></div>
+                        <p class="text-gray-300">Loading product details...</p>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="errorState" class="text-center py-12 hidden">
+                        <div class="w-16 h-16 bg-red-400 bg-opacity-20 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Product Not Found</h3>
+                        <p class="text-gray-300 mb-4">The record you're looking for doesn't exist or has been removed.</p>
+                        <a href="supportarecord.html" class="premium-button px-6 py-3 text-black font-semibold rounded-xl text-sm inline-block">
+                            Back to Support a Record
+                        </a>
+                    </div>
+
+                    <!-- Product Content -->
+                    <div id="productContent" class="hidden">
+                        <!-- Main Product Layout -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                            <!-- Left Column - Images -->
+                            <div class="lg:col-span-1">
+                                <!-- Main Image -->
+                                <div class="luxury-card rounded-xl p-4 mb-4">
+                                    <img id="mainImage" src="" alt="" class="w-full h-80 object-cover rounded-lg">
+                                </div>
+                                
+                                <!-- Thumbnail Images -->
+                                <div id="thumbnailGallery" class="grid grid-cols-4 gap-2">
+                                    <!-- Thumbnails will be loaded here -->
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Product Info -->
+                            <div class="lg:col-span-2">
+                                <!-- Product Info Grid -->
+                                <div class="luxury-card rounded-xl p-4">
+                                    <!-- Basic Info -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <div class="text-xs text-gray-400 uppercase tracking-wide mb-1">Title</div>
+                                            <div id="productTitle" class="text-lg font-bold text-white"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs text-gray-400 uppercase tracking-wide mb-1">Artist</div>
+                                            <div id="productArtist" class="text-lg font-semibold text-gray-300"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs text-gray-400 uppercase tracking-wide mb-1">Genre</div>
+                                            <div id="productGenre" class="text-sm text-pink-400 font-semibold"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs text-gray-400 uppercase tracking-wide mb-1">Price</div>
+                                            <div id="preOrderPrice" class="text-xl font-bold text-pink-400"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="mb-4">
+                                        <div class="text-xs text-gray-400 uppercase tracking-wide mb-1">Description</div>
+                                        <div id="productDescription" class="text-sm text-gray-300 leading-relaxed"></div>
+                                    </div>
+
+                                    <!-- Campaign Progress -->
+                                    <div class="mb-4">
+                                        <div class="text-xs text-gray-400 uppercase tracking-wide mb-2">Campaign Progress</div>
+                                        
+                                        <div class="mb-3">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <span class="text-xs text-gray-300">Funding</span>
+                                                <span id="progressText" class="text-xs text-white font-semibold"></span>
+                                            </div>
+                                            <div class="w-full bg-white bg-opacity-10 rounded-full h-2 overflow-hidden">
+                                                <div id="progressBar" class="progress-bar h-2 rounded-full transition-all duration-1000 ease-out" style="width: 0%;"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-4 gap-2 mb-3">
+                                            <div class="text-center">
+                                                <div id="raisedAmount" class="text-sm font-bold text-green-400"></div>
+                                                <div class="text-xs text-gray-400">Raised</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div id="goalAmount" class="text-sm font-bold text-white"></div>
+                                                <div class="text-xs text-gray-400">Goal</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div id="backersCount" class="text-sm font-bold text-blue-400"></div>
+                                                <div class="text-xs text-gray-400">Backers</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div id="daysLeft" class="text-sm font-bold text-orange-400"></div>
+                                                <div class="text-xs text-gray-400">Days Left</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <span id="campaignStatus" class="status-badge status-pending text-xs"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Delivery Info -->
+                                    <div class="mb-4">
+                                        <div class="text-xs text-gray-400 uppercase tracking-wide mb-1">Estimated Delivery</div>
+                                        <div id="estimatedDelivery" class="text-sm text-white font-semibold"></div>
+                                    </div>
+
+                                    <!-- Pre-Order Button -->
+                                    <div class="text-center">
+                                        <a id="preOrderButton" href="login.html" class="premium-button px-8 py-3 text-black font-semibold rounded-xl text-sm inline-block w-full text-center">
+                                            Pre-Order Now
+                                        </a>
+                                        <p class="text-xs text-gray-400 mt-2">
+                                            Payment charged only when campaign reaches funding goal
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe animated elements
+        document.querySelectorAll('.section-fade').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Navigation state management
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigationState();
+            loadProductDetail();
+        });
+
+        function updateNavigationState() {
+            const loginNavLink = document.getElementById('loginNavLink');
+            const accountNavLink = document.getElementById('accountNavLink');
+            const logoutNavLink = document.getElementById('logoutNavLink');
+            
+            if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
+                // User is logged in
+                if (loginNavLink) loginNavLink.classList.add('hidden');
+                if (accountNavLink) accountNavLink.classList.remove('hidden');
+                if (logoutNavLink) logoutNavLink.classList.remove('hidden');
+            } else {
+                // User is not logged in
+                if (loginNavLink) loginNavLink.classList.remove('hidden');
+                if (accountNavLink) accountNavLink.classList.add('hidden');
+                if (logoutNavLink) logoutNavLink.classList.add('hidden');
+            }
+        }
+
+        // Logout functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.getElementById('logoutNavLink');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Confirm logout
+                    if (confirm('Are you sure you want to log out?')) {
+                        // Clear session data
+                        if (window.SecureStorageManager) {
+                            window.SecureStorageManager.clearSession();
+                        }
+                        
+                        // Clear any other stored data (but preserve account verification for local testing)
+                        localStorage.removeItem('userData');
+                        localStorage.removeItem('sessionId');
+                        localStorage.removeItem('verificationToken');
+                        localStorage.removeItem('pendingVerificationEmail');
+                        
+                        // Preserve account verification status (both local and production)
+                        console.log('Preserving account verification status for better UX');
+                        
+                        // Log security event
+                        if (window.ServerValidation) {
+                            window.ServerValidation.logSecurityEvent('user_logout', {
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                        
+                        // Redirect to homepage
+                        alert('You have been logged out successfully.');
+                        window.location.href = 'index.html';
+                    }
+                });
+            }
+        });
+
+        // Load product detail
+        function loadProductDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const recordId = urlParams.get('id');
+            
+            if (!recordId) {
+                showError();
+                return;
+            }
+
+            // Get uploaded records from localStorage
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            
+            // Find the record
+            const record = records.find(r => r.id === recordId);
+            
+            if (!record) {
+                showError();
+                return;
+            }
+
+            // Display the record
+            displayProduct(record);
+        }
+
+        function showError() {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        }
+
+        function displayProduct(record) {
+            // Hide loading, show content
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('productContent').classList.remove('hidden');
+
+            // Basic info
+            document.getElementById('productTitle').textContent = record.albumTitle;
+            document.getElementById('productArtist').textContent = `by ${record.artistName}`;
+            document.getElementById('productGenre').textContent = record.genre || 'Music';
+            document.getElementById('productDescription').textContent = record.description || 'No description available.';
+            document.getElementById('preOrderPrice').textContent = `€${record.price}`;
+
+            // Calculate estimated delivery (30 days after campaign ends)
+            const campaignEndDate = new Date(record.startDate);
+            campaignEndDate.setDate(campaignEndDate.getDate() + record.campaignDays);
+            const deliveryDate = new Date(campaignEndDate);
+            deliveryDate.setDate(deliveryDate.getDate() + 30);
+            document.getElementById('estimatedDelivery').textContent = deliveryDate.toLocaleDateString();
+
+            // Display images
+            displayImages(record);
+
+            // Campaign progress
+            displayCampaignProgress(record);
+
+            // Update pre-order button based on login status
+            updatePreOrderButton(record);
+        }
+
+        function displayImages(record) {
+            const mainImage = document.getElementById('mainImage');
+            const thumbnailGallery = document.getElementById('thumbnailGallery');
+            const images = record.albumImages || [record.coverImage];
+            
+            // Set main image to first image
+            if (images.length > 0) {
+                mainImage.src = images[0];
+                mainImage.alt = `${record.albumTitle} - Main Image`;
+            }
+            
+            // Create thumbnails
+            thumbnailGallery.innerHTML = images.map((imageUrl, index) => `
+                <div class="luxury-card rounded-lg p-1 cursor-pointer hover:scale-105 transition-transform duration-300 ${index === 0 ? 'ring-2 ring-pink-400' : ''}" 
+                     onclick="switchMainImage('${imageUrl}', this)">
+                    <img src="${imageUrl}" 
+                         alt="${record.albumTitle} - Thumbnail ${index + 1}" 
+                         class="w-full h-16 object-cover rounded-md">
+                </div>
+            `).join('');
+        }
+
+        function switchMainImage(imageUrl, thumbnailElement) {
+            // Update main image
+            document.getElementById('mainImage').src = imageUrl;
+            
+            // Remove active class from all thumbnails
+            document.querySelectorAll('#thumbnailGallery > div').forEach(thumb => {
+                thumb.classList.remove('ring-2', 'ring-pink-400');
+            });
+            
+            // Add active class to clicked thumbnail
+            thumbnailElement.classList.add('ring-2', 'ring-pink-400');
+        }
+
+        function displayCampaignProgress(record) {
+            const progressPercentage = Math.min((record.raised / record.fundingGoal) * 100, 100);
+            const daysLeft = calculateDaysLeft(record.startDate, record.campaignDays);
+            const isFunded = record.raised >= record.fundingGoal;
+
+            // Progress bar
+            document.getElementById('progressBar').style.width = `${progressPercentage}%`;
+            document.getElementById('progressText').textContent = `€${record.raised} / €${record.fundingGoal}`;
+
+            // Stats
+            document.getElementById('raisedAmount').textContent = `€${record.raised}`;
+            document.getElementById('goalAmount').textContent = `€${record.fundingGoal}`;
+            document.getElementById('backersCount').textContent = record.backers || 0;
+            document.getElementById('daysLeft').textContent = daysLeft > 0 ? daysLeft : 0;
+
+            // Status
+            const statusElement = document.getElementById('campaignStatus');
+            if (isFunded) {
+                statusElement.textContent = 'FUNDED!';
+                statusElement.className = 'status-badge status-funded';
+            } else if (daysLeft <= 0) {
+                statusElement.textContent = 'Campaign Ended';
+                statusElement.className = 'status-badge status-refunded';
+            } else {
+                statusElement.textContent = 'Active Campaign';
+                statusElement.className = 'status-badge status-pending';
+            }
+        }
+
+        function calculateDaysLeft(startDate, campaignDays) {
+            const start = new Date(startDate);
+            const end = new Date(start.getTime() + (campaignDays * 24 * 60 * 60 * 1000));
+            const now = new Date();
+            const diffTime = end - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return Math.max(0, diffDays);
+        }
+
+        function updatePreOrderButton(record) {
+            const preOrderButton = document.getElementById('preOrderButton');
+            
+            // Check if campaign has been ended (status is "pressing")
+            if (record.status === 'pressing') {
+                // Campaign has ended - hide the pre-order button and show status message
+                preOrderButton.style.display = 'none';
+                
+                // Create and show the "Budget Reached" message
+                const statusMessage = document.createElement('div');
+                statusMessage.className = 'text-center p-6 bg-gradient-to-r from-green-600 to-green-700 rounded-xl border border-green-500';
+                statusMessage.innerHTML = `
+                    <div class="text-2xl font-bold text-white mb-2">🎵 BUDGET REACHED!</div>
+                    <div class="text-lg text-green-100">Proceeding to Press</div>
+                    <div class="text-sm text-green-200 mt-2">This campaign has ended and is now being prepared for production.</div>
+                `;
+                
+                // Insert the message after the pre-order button
+                preOrderButton.parentNode.insertBefore(statusMessage, preOrderButton.nextSibling);
+                
+                console.log('Campaign ended - pre-order button hidden and status message shown');
+                return;
+            }
+            
+            if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
+                // User is logged in - go to payment
+                preOrderButton.href = `payment.html?type=preorder&recordId=${record.id}`;
+            } else {
+                // User is not logged in - go to login
+                preOrderButton.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Dreams - Wax Encounters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .universe-bg {
+            background: 
+                radial-gradient(ellipse at 70% 30%, rgba(199, 122, 180, 0.15), transparent 50%),
+                radial-gradient(ellipse at 30% 70%, rgba(244, 187, 56, 0.15), transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(109, 203, 103, 0.1), transparent 60%),
+                linear-gradient(135deg, #090a08 0%, #1a1a1a 50%, #090a08 100%);
+            position: relative;
+        }
+
+        .universe-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(2px 2px at 160px 30px, #fff, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: sparkle 20s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes sparkle {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-100px); }
+        }
+
+        .glitch-text {
+            position: relative;
+            color: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch-text::before {
+            animation: glitch-1 0.5s infinite;
+            color: #ff00ff;
+            z-index: -1;
+        }
+
+        .glitch-text::after {
+            animation: glitch-2 0.5s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 14%, 15%, 49%, 50%, 99%, 100% {
+                transform: translate(0);
+            }
+            15%, 49% {
+                transform: translate(-2px, 2px);
+            }
+        }
+
+        @keyframes glitch-2 {
+            0%, 20%, 21%, 62%, 63%, 99%, 100% {
+                transform: translate(0);
+            }
+            21%, 62% {
+                transform: translate(2px, -2px);
+            }
+        }
+
+        .neon-border {
+            border: 2px solid #c77ab4;
+            box-shadow: 
+                0 0 10px #c77ab4,
+                inset 0 0 10px rgba(199, 122, 180, 0.1);
+        }
+
+        .neon-text {
+            color: #c77ab4;
+            text-shadow: 0 0 10px #c77ab4;
+        }
+
+        .pink-text {
+            color: #f4bb38;
+            text-shadow: 0 0 10px #f4bb38;
+        }
+
+        .matrix-bg {
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(109, 203, 103, 0.03) 2px,
+                    rgba(109, 203, 103, 0.03) 4px
+                );
+        }
+
+        .scan-line {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #c77ab4, transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .terminal-window {
+            background: rgba(9, 10, 8, 0.9);
+            border: 1px solid #6ab02f;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(199, 122, 180, 0.3);
+        }
+
+        .terminal-header {
+            background: #090a08;
+            border-bottom: 1px solid #6ab02f;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #c77ab4; }
+        .terminal-dot.yellow { background: #f4bb38; }
+        .terminal-dot.green { background: #6dcb67; }
+
+        .terminal-content {
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .progress-bar-badcamp {
+            background: linear-gradient(90deg, #c77ab4 0%, #6dcb67 100%);
+            box-shadow: 0 0 20px rgba(199, 122, 180, 0.5);
+        }
+
+        .button-badcamp {
+            background: linear-gradient(45deg, #c77ab4, #6dcb67);
+            border: none;
+            color: #090a08;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button-badcamp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(199, 122, 180, 0.4);
+        }
+
+        .button-badcamp::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .button-badcamp:hover::before {
+            left: 100%;
+        }
+
+        .vinyl-spin {
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .pixel-grid {
+            background-image: 
+                linear-gradient(rgba(199, 122, 180, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(199, 122, 180, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .luxury-card {
+            background: linear-gradient(135deg, rgba(9, 10, 8, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(199, 122, 180, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(199, 122, 180, 0.05) inset;
+        }
+
+        .luxury-gradient {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.1) 100%);
+        }
+
+        .shimmer-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer-effect::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .shimmer-effect:hover::after {
+            left: 150%;
+        }
+
+        .premium-button {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .premium-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #6dcb67 0%, #6ab02f 100%);
+            box-shadow: 0 0 20px rgba(109, 203, 103, 0.3);
+        }
+    </style>
+</head>
+<body class="universe-bg h-screen overflow-hidden">
+    <!-- Main Container - Single Page Layout -->
+    <div class="h-screen flex">
+        <!-- Left Side - Album Art & Info -->
+        <div class="w-1/2 flex flex-col p-6">
+            <!-- Album Art -->
+            <div class="flex items-center justify-center mb-6">
+                <div class="relative group">
+                    <div class="aspect-square w-64 h-64 rounded-xl overflow-hidden luxury-card p-3 shimmer-effect">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                             alt="Ethereal Dreams" 
+                             class="w-full h-full object-cover rounded-lg">
+                        <div class="absolute inset-0 luxury-gradient rounded-lg"></div>
+                        <div class="absolute inset-3 border-2 border-white border-opacity-20 rounded"></div>
+                    </div>
+                    <!-- Play Button Overlay -->
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 5v10l8-5-8-5z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Album Title & Artist -->
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-extrabold mb-2 tracking-tight">
+                    Ethereal Dreams
+                    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400 text-2xl">
+                        by Luna Nova
+                    </span>
+                </h1>
+                <p class="text-base text-gray-300 mb-1">Ambient Electronic</p>
+                <p class="text-xs text-gray-400">Released March 15, 2024</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-300 font-medium">Funding Progress</span>
+                    <span class="text-sm text-gray-400">78 / 100 (78%)</span>
+                </div>
+                <div class="w-full bg-white bg-opacity-10 rounded-full h-2 overflow-hidden">
+                    <div class="progress-bar h-2 rounded-full" style="width: 78%;"></div>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">22 days remaining</p>
+            </div>
+
+            <!-- Price & Button -->
+            <div class="text-center mb-4">
+                <div class="text-3xl font-bold text-white mb-4">€35</div>
+                <button class="premium-button w-full px-6 py-3 text-black font-semibold rounded-lg text-base mb-3">
+                    Pre-Order Now
+                </button>
+                <div class="flex justify-center space-x-4 text-xs">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">
+                        Listen on Spotify
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">
+                        Share Album
+                    </a>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="luxury-card rounded-lg p-4 text-center">
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <div class="text-gray-400 mb-1">Format</div>
+                        <div class="text-white font-medium">12" Vinyl</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400 mb-1">Runtime</div>
+                        <div class="text-white font-medium">28:55</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400 mb-1">Color</div>
+                        <div class="text-white font-medium">Transparent Blue</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400 mb-1">Weight</div>
+                        <div class="text-white font-medium">180g</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Terminal Interface -->
+        <div class="w-1/2 p-8">
+            <!-- Terminal Window -->
+            <div class="terminal-window h-full">
+                <div class="terminal-header">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot green"></div>
+                    <span class="mono text-sm ml-4">vinyl-terminal.exe</span>
+                </div>
+                
+                <div class="terminal-content h-full overflow-y-auto">
+                    <!-- Track List -->
+                    <div class="mb-6">
+                        <div class="neon-text mb-4 mono">TRACK_LIST:</div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
+                                <span class="mono">01. COSMIC_DRIFT.mp3</span>
+                                <span class="pink-text mono">4:32</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
+                                <span class="mono">02. LUNAR_ECHOES.mp3</span>
+                                <span class="pink-text mono">5:18</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
+                                <span class="mono">03. STELLAR_WINDS.mp3</span>
+                                <span class="pink-text mono">6:45</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
+                                <span class="mono">04. DREAM_SEQUENCE.mp3</span>
+                                <span class="pink-text mono">7:22</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
+                                <span class="mono">05. ETHEREAL_DAWN.mp3</span>
+                                <span class="pink-text mono">4:58</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Album Specs -->
+                    <div class="mb-6">
+                        <div class="neon-text mb-4 mono">ALBUM_SPECS:</div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between">
+                                <span class="mono">ARTIST:</span>
+                                <span class="pink-text mono">LUNA_NOVA</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="mono">GENRE:</span>
+                                <span class="pink-text mono">AMBIENT_ELECTRONIC</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="mono">RELEASE:</span>
+                                <span class="pink-text mono">2024.03.15</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="mono">FORMAT:</span>
+                                <span class="pink-text mono">12"_VINYL_180G</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="mono">COLOR:</span>
+                                <span class="pink-text mono">TRANSPARENT_BLUE</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="mono">RUNTIME:</span>
+                                <span class="pink-text mono">28:55</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="mb-6">
+                        <div class="neon-text mb-4 mono">SYSTEM_STATUS:</div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between">
+                                <span class="mono">PRE_ORDERS:</span>
+                                <span class="pink-text mono">78/100</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="mono">DAYS_LEFT:</span>
+                                <span class="pink-text mono">22</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="mono">STATUS:</span>
+                                <span class="neon-text mono">ACTIVE</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="mono">RISK:</span>
+                                <span class="neon-text mono">NONE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Artist Bio -->
+                    <div class="mb-6">
+                        <div class="neon-text mb-4 mono">ARTIST_BIO:</div>
+                        <div class="text-gray-300 text-sm leading-relaxed">
+                            <p class="mb-2">LUNA_NOVA: Electronic producer specializing in ethereal soundscapes.</p>
+                            <p class="mb-2">5+ years experience in ambient/electronic music.</p>
+                            <p>ETHEREAL_DREAMS represents most ambitious project to date.</p>
+                        </div>
+                    </div>
+
+                    <!-- Commands -->
+                    <div>
+                        <div class="neon-text mb-4 mono">AVAILABLE_COMMANDS:</div>
+                        <div class="space-y-1">
+                            <div class="mono text-sm">
+                                <span class="neon-text">$</span> pre_order --album="ethereal_dreams" --price=35
+                            </div>
+                            <div class="mono text-sm">
+                                <span class="neon-text">$</span> listen --platform="spotify" --track="all"
+                            </div>
+                            <div class="mono text-sm">
+                                <span class="neon-text">$</span> share --social="all" --format="vinyl"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pre-order button interactions
+        document.querySelectorAll('.button-badcamp').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('PRE-ORDER SYSTEM ACTIVATED!');
+            });
+        });
+        
+        // Terminal-like typing effect
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+        
+        // Initialize glitch effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const glitchElements = document.querySelectorAll('.glitch-text');
+            glitchElements.forEach(element => {
+                element.setAttribute('data-text', element.textContent);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In - Wax Encounters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+        .glass-nav { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .premium-button { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .premium-button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2); }
+        .text-overlay { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 2rem; border: 1px solid rgba(199, 122, 180, 0.2); }
+        .main-background { position: fixed; top: 0; left: 0; right: 0; height: 200vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/background image.jpeg'); background-size: cover; background-position: center top; background-repeat: no-repeat; z-index: -1; }
+        .section-fade { opacity: 0; transform: translateY(40px); transition: opacity 1.2s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .section-fade.visible { opacity: 1; transform: translateY(0); }
+    </style>
+    <link rel="icon" href="data:,">
+    <!-- Security Scripts -->
+    <script src="js/security.js"></script>
+    <script src="js/secure-storage.js"></script>
+    <script src="js/server-validation.js"></script>
+</head>
+<body class="text-white overflow-x-hidden">
+    <div class="main-background"></div>
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-xl font-bold tracking-wider">WAX ENCOUNTERS</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
+                        <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
+                        <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
+                        <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
+                        <a href="index.html#dashboard" class="hover:text-gray-300 transition-colors duration-200">Dashboard</a>
+                        <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
+                        <a href="login.html" class="text-pink-400 font-semibold">Log In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="min-h-screen pt-24">
+        <section class="relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <div class="text-overlay inline-block">
+                        <h1 class="text-4xl sm:text-5xl font-extrabold mb-2 tracking-tight">Welcome Back</h1>
+                        <p class="text-lg text-gray-300">Sign in to your account to continue your vinyl journey.</p>
+                    </div>
+                </div>
+
+                <div class="max-w-md mx-auto glass-card rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 text-center">Log In</h3>
+                    <form id="loginForm" class="space-y-6">
+                        <div>
+                            <input id="username" type="text" placeholder="Username or Email Address" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                        </div>
+                        <div>
+                            <div class="relative">
+                                <input id="password" type="password" placeholder="Password" class="w-full px-4 py-3 pr-12 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                <button type="button" id="togglePassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200">
+                                    <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    <svg id="eyeOffIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="inline-flex items-center space-x-3 cursor-pointer select-none">
+                                <input id="rememberMe" type="checkbox" class="h-5 w-5 rounded border-white border-opacity-20 bg-white bg-opacity-10 text-pink-400 focus:ring-pink-400">
+                                <span class="text-sm text-gray-300">Remember me</span>
+                            </label>
+                            <a href="#" class="text-sm text-pink-400 hover:text-pink-300 transition-colors duration-200">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="premium-button w-full px-8 py-4 text-black font-semibold rounded-xl text-lg hover:scale-105 transition-transform duration-200">
+                            Log In
+                        </button>
+                    </form>
+                    
+                    <!-- Admin Login Section -->
+                    <div class="mt-8 pt-6 border-t border-white border-opacity-20">
+                        <div class="text-center">
+                            <p class="text-gray-400 text-sm mb-4">Administrator Access</p>
+                            <button id="adminLoginBtn" class="glass-card px-6 py-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300 text-sm inline-block mb-2">
+                                Admin Login
+                            </button>
+                            <div class="text-xs text-gray-500">
+                                <a href="admin-setup.html?key=Zx3$mK9#pL2@vR8nQ" class="text-pink-400 hover:text-pink-300 transition-colors duration-200">
+                                    Admin Setup (Secure)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 text-center">
+                        <p class="text-gray-300 mb-4">Don't have an account yet?</p>
+                        <a href="create-account.html" class="glass-card px-8 py-4 rounded-xl hover:bg-white hover:bg-opacity-10 transition-all duration-300 text-lg inline-block">
+                            Create an Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
+                // User is already logged in, redirect based on referrer
+                const referrer = document.referrer;
+                if (referrer.includes('supportarecord.html')) {
+                    // User came from pre-order page, redirect to payment
+                    window.location.href = 'payment.html';
+                } else {
+                    // Default redirect to account page
+                    window.location.href = 'account.html';
+                }
+            }
+        });
+
+        // Intersection Observer for section animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all animated elements
+        document.querySelectorAll('.section-fade').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Handle login form submission with security
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Logging In...';
+                submitButton.disabled = true;
+                
+                try {
+                    const loginData = {
+                        username: document.getElementById('username').value.trim(),
+                        password: document.getElementById('password').value.trim(),
+                        rememberMe: document.getElementById('rememberMe').checked
+                    };
+                    
+                    // Server-side validation
+                    const validation = window.ServerValidation.validateLoginData(loginData);
+                    if (!validation.isValid) {
+                        alert('Validation Error:\n' + validation.errors.join('\n'));
+                        return;
+                    }
+                    
+                    // Check rate limiting (skip for local testing)
+                    const isLocalTesting = window.location.protocol === 'file:';
+                    
+                    if (!isLocalTesting) {
+                        const rateLimit = window.ServerValidation.checkRateLimit(
+                            loginData.username, 
+                            'login', 
+                            5, // 5 attempts per hour
+                            60 * 60 * 1000 // 1 hour window
+                        );
+                        
+                        if (!rateLimit.allowed) {
+                            const resetTime = new Date(rateLimit.resetTime).toLocaleTimeString();
+                            alert(`Too many login attempts. Please try again after ${resetTime}`);
+                            return;
+                        }
+                    } else {
+                        console.log('Local testing mode - rate limiting disabled');
+                    }
+                    
+                    // Check for force login bypass (local testing only)
+                    const forceBypass = localStorage.getItem('forceLoginBypass') === 'true';
+                    
+                    if (isLocalTesting && forceBypass) {
+                        console.log('Force login bypass active - allowing login');
+                        
+                        try {
+                            // Update session
+                            await window.SecureStorageManager.updateSession(true);
+                            console.log('Session updated successfully (bypass mode)');
+                            
+                            // Log security event
+                            if (window.ServerValidation) {
+                                window.ServerValidation.logSecurityEvent('user_login_bypass', {
+                                    email: loginData.username,
+                                    timestamp: new Date().toISOString(),
+                                    reason: 'force_bypass'
+                                });
+                            }
+                            
+                            // Success - redirect based on referrer
+                            alert('Login successful! (Bypass mode)');
+                            
+                            // Check if user came from support a record page (pre-order)
+                            const referrer = document.referrer;
+                            console.log('Referrer (bypass):', referrer);
+                            
+                            if (referrer && referrer.includes('supportarecord.html')) {
+                                // User came from pre-order page, redirect to payment
+                                console.log('Redirecting to payment page (bypass)');
+                                window.location.href = 'payment.html';
+                            } else {
+                                // Default redirect to account page
+                                console.log('Redirecting to account page (bypass)');
+                                window.location.href = 'account.html';
+                            }
+                            return;
+                        } catch (error) {
+                            console.error('Error in bypass login:', error);
+                            alert('Login bypass failed: ' + error.message);
+                        }
+                    }
+                    
+                    // Check if user data exists and verify credentials
+                    if (window.SecureStorageManager && window.SecureStorageManager.hasUserData()) {
+                        console.log('User data found, attempting to retrieve...');
+                        
+                        try {
+                            const userData = await window.SecureStorageManager.retrieveUserData(loginData.password);
+                            console.log('User data retrieval result:', userData);
+                        
+                        if (userData.success) {
+                            // Check if account is verified (for local testing or production)
+                            let isAccountVerified;
+                            if (isLocalTesting) {
+                                // Local testing: always allow login (email verification is one-time only)
+                                isAccountVerified = true;
+                            } else {
+                                // Production: check if account has been verified through email
+                                // In production, accounts are verified after email confirmation
+                                isAccountVerified = userData.data.emailVerified || 
+                                                  localStorage.getItem('accountVerified') === 'true' ||
+                                                  window.SecureStorageManager.isSessionValid();
+                            }
+                            
+                            console.log('Account verification status:', isAccountVerified, '(Local testing:', isLocalTesting, ')');
+                            
+                            if (!isAccountVerified) {
+                                alert('Please verify your email address before logging in. Check your inbox for the verification email.');
+                                return;
+                            }
+                            
+                            // Verify login matches either email or username (case insensitive)
+                            const storedEmail = userData.data.email ? userData.data.email.toLowerCase() : '';
+                            const storedUsername = userData.data.username ? userData.data.username.toLowerCase() : '';
+                            const inputLogin = loginData.username.toLowerCase();
+                            
+                            console.log('User data structure:', userData.data);
+                            console.log('Comparing login:', storedEmail, 'or', storedUsername, 'vs', inputLogin);
+                            
+                            // Check if we have valid stored credentials
+                            if (!storedEmail && !storedUsername) {
+                                console.log('No valid email or username found in user data');
+                                alert('Account data is corrupted. Please create a new account.');
+                                return;
+                            }
+                            
+                            if (storedEmail === inputLogin || storedUsername === inputLogin) {
+                                // Update session
+                                await window.SecureStorageManager.updateSession(true);
+                                
+                                // Log security event
+                                window.ServerValidation.logSecurityEvent('user_login', {
+                                    email: userData.data.email,
+                                    timestamp: new Date().toISOString()
+                                });
+                                
+                                // Success - redirect based on referrer
+                                alert('Login successful!');
+                                
+                                // Check if user came from support a record page (pre-order)
+                                const referrer = document.referrer;
+                                if (referrer.includes('supportarecord.html')) {
+                                    // User came from pre-order page, redirect to payment
+                                    window.location.href = 'payment.html';
+                                } else {
+                                    // Default redirect to account page
+                                    window.location.href = 'account.html';
+                                }
+                                return;
+                            } else {
+                                console.log('Email mismatch');
+                            }
+                        } else {
+                            console.log('Failed to retrieve user data:', userData.error);
+                            
+                            // Fallback for local testing: if data integrity fails but account is verified, allow login
+                            const isAccountVerified = localStorage.getItem('accountVerified') === 'true';
+                            
+                            if (isLocalTesting && isAccountVerified) {
+                                console.log('Local testing fallback: Data integrity failed but account is verified, allowing login');
+                                
+                                try {
+                                    // Update session
+                                    await window.SecureStorageManager.updateSession(true);
+                                    console.log('Session updated successfully');
+                                    
+                                    // Log security event
+                                    if (window.ServerValidation) {
+                                        window.ServerValidation.logSecurityEvent('user_login_fallback', {
+                                            email: loginData.username,
+                                            timestamp: new Date().toISOString(),
+                                            reason: 'data_integrity_fallback'
+                                        });
+                                    }
+                                    
+                                    // Success - redirect based on referrer
+                                    alert('Login successful! (Fallback mode)');
+                                    
+                                    // Check if user came from support a record page (pre-order)
+                                    const referrer = document.referrer;
+                                    console.log('Referrer:', referrer);
+                                    
+                                    if (referrer && referrer.includes('supportarecord.html')) {
+                                        // User came from pre-order page, redirect to payment
+                                        console.log('Redirecting to payment page');
+                                        window.location.href = 'payment.html';
+                                    } else {
+                                        // Default redirect to account page
+                                        console.log('Redirecting to account page');
+                                        window.location.href = 'account.html';
+                                    }
+                                    return;
+                                } catch (error) {
+                                    console.error('Error in fallback login:', error);
+                                    alert('Login fallback failed: ' + error.message);
+                                }
+                            }
+                        }
+                        } catch (userDataError) {
+                            console.error('Error retrieving user data:', userDataError);
+                            console.error('UserData error details:', {
+                                message: userDataError.message,
+                                stack: userDataError.stack
+                            });
+                            
+                            // If it's a data integrity error in local testing, try fallback
+                            if (isLocalTesting && userDataError.message.includes('Data integrity check failed')) {
+                                console.log('Data integrity failed in local testing, trying fallback...');
+                                const isAccountVerified = localStorage.getItem('accountVerified') === 'true';
+                                
+                                if (isAccountVerified) {
+                                    try {
+                                        await window.SecureStorageManager.updateSession(true);
+                                        alert('Login successful! (Data integrity fallback)');
+                                        
+                                        const referrer = document.referrer;
+                                        if (referrer && referrer.includes('supportarecord.html')) {
+                                            window.location.href = 'payment.html';
+                                        } else {
+                                            window.location.href = 'account.html';
+                                        }
+                                        return;
+                                    } catch (fallbackError) {
+                                        console.error('Fallback login failed:', fallbackError);
+                                        alert('Login failed due to data integrity issues. Please try creating a new account.');
+                                    }
+                                }
+                            }
+                            
+                            throw userDataError; // Re-throw to be caught by outer catch
+                        }
+                    } else {
+                        console.log('No user data found in storage');
+                    }
+                    
+                    // Invalid credentials - provide detailed error message
+                    console.log('=== LOGIN FAILED ===');
+                    console.log('SecureStorageManager available:', !!window.SecureStorageManager);
+                    console.log('User data exists:', window.SecureStorageManager ? window.SecureStorageManager.hasUserData() : 'N/A');
+                    console.log('Account verified:', localStorage.getItem('accountVerified'));
+                    console.log('Input username/email:', loginData.username);
+                    console.log('Input password length:', loginData.password.length);
+                    console.log('Local testing mode:', isLocalTesting);
+                    
+                    if (isLocalTesting) {
+                        alert(`Invalid username or password. Please check:\n\n1. Username/Email: ${loginData.username}\n2. Make sure you're using the correct email or username\n3. Try running 'forceLoginBypass()' in console if needed\n4. Check the browser console (F12) for more details`);
+                    } else {
+                        alert(`Invalid username or password. Please check:\n\n1. Username/Email: ${loginData.username}\n2. Make sure you've verified your email address\n3. Check that you're using the correct credentials\n4. If you just created an account, check your email for verification`);
+                    }
+                    
+                } catch (error) {
+                    console.error('Login error:', error);
+                    console.error('Error details:', {
+                        message: error.message,
+                        stack: error.stack,
+                        name: error.name
+                    });
+                    alert(`An error occurred during login: ${error.message}\n\nPlease check the browser console (F12) for more details.`);
+                } finally {
+                    // Reset button state
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
+            });
+        }
+
+        // Password toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            const eyeOffIcon = document.getElementById('eyeOffIcon');
+
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        eyeIcon.classList.add('hidden');
+                        eyeOffIcon.classList.remove('hidden');
+                    } else {
+                        passwordInput.type = 'password';
+                        eyeIcon.classList.remove('hidden');
+                        eyeOffIcon.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Debug function to check stored data (for troubleshooting)
+            window.debugLogin = function() {
+                console.log('=== LOGIN DEBUG INFO ===');
+                console.log('Has user data:', window.SecureStorageManager.hasUserData());
+                console.log('Session valid:', window.SecureStorageManager.isSessionValid());
+                console.log('Account verified (local):', localStorage.getItem('accountVerified'));
+                console.log('Verified email (local):', localStorage.getItem('verifiedEmail'));
+                
+                // Check what's in localStorage
+                const keys = Object.keys(localStorage);
+                console.log('LocalStorage keys:', keys);
+                
+                keys.forEach(key => {
+                    if (key.includes('wax_encounters')) {
+                        console.log(`Key: ${key}`, localStorage.getItem(key));
+                    }
+                });
+                console.log('========================');
+            };
+
+            // Function to manually activate account for local testing
+            window.activateAccountForLocalTesting = function() {
+                if (window.location.protocol === 'file:') {
+                    localStorage.setItem('accountVerified', 'true');
+                    console.log('Account activated for local testing!');
+                    alert('Account activated for local testing! You can now log in.');
+                } else {
+                    console.log('This function only works in local testing mode (file:// protocol)');
+                    alert('This function only works in local testing mode.');
+                }
+            };
+
+            // Function to clear rate limiting data for local testing
+            window.clearRateLimit = function() {
+                if (window.location.protocol === 'file:') {
+                    // Clear all rate limiting data
+                    const keys = Object.keys(localStorage);
+                    keys.forEach(key => {
+                        if (key.includes('rate_limit') || key.includes('login_attempts')) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+                    console.log('Rate limiting data cleared for local testing!');
+                    alert('Rate limiting cleared! You can now log in without restrictions.');
+                } else {
+                    console.log('This function only works in local testing mode (file:// protocol)');
+                    alert('This function only works in local testing mode.');
+                }
+            };
+
+            // Function to check what user data is stored
+            window.checkStoredUserData = async function() {
+                console.log('=== STORED USER DATA CHECK ===');
+                console.log('Has user data:', window.SecureStorageManager.hasUserData());
+                
+                if (window.SecureStorageManager.hasUserData()) {
+                    try {
+                        // Try to retrieve user data with a test password
+                        const testPasswords = ['TestPassword123!', 'password', 'test123'];
+                        
+                        for (const testPassword of testPasswords) {
+                            console.log(`Trying password: ${testPassword}`);
+                            const userData = await window.SecureStorageManager.retrieveUserData(testPassword);
+                            console.log('Result:', userData);
+                            
+                            if (userData.success) {
+                                console.log('SUCCESS! Found user data with password:', testPassword);
+                                console.log('Stored email:', userData.data.email);
+                                console.log('Stored username:', userData.data.username);
+                                console.log('Stored name:', userData.data.firstName, userData.data.lastName);
+                                break;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error retrieving user data:', error);
+                    }
+                } else {
+                    console.log('No user data found in storage');
+                }
+                
+                // Check all localStorage keys
+                const keys = Object.keys(localStorage);
+                console.log('All localStorage keys:', keys);
+                keys.forEach(key => {
+                    if (key.includes('wax_encounters') || key.includes('user') || key.includes('account')) {
+                        console.log(`Key: ${key}`, localStorage.getItem(key));
+                    }
+                });
+                console.log('===============================');
+            };
+
+            // Function to clear all user data (for fixing corrupted data)
+            window.clearAllUserData = function() {
+                if (window.location.protocol === 'file:') {
+                    console.log('Clearing all user data...');
+                    
+                    // Clear all localStorage data
+                    const keys = Object.keys(localStorage);
+                    keys.forEach(key => {
+                        if (key.includes('wax_encounters') || 
+                            key.includes('user') || 
+                            key.includes('account') || 
+                            key.includes('session') ||
+                            key.includes('verification') ||
+                            key.includes('rate_limit')) {
+                            localStorage.removeItem(key);
+                            console.log('Removed:', key);
+                        }
+                    });
+                    
+                    console.log('All user data cleared! You can now create a new account.');
+                    alert('All user data cleared! You can now create a new account with the username field.');
+                } else {
+                    console.log('This function only works in local testing mode (file:// protocol)');
+                    alert('This function only works in local testing mode.');
+                }
+            };
+
+            // Function to restore account verification status (for after logout)
+            window.restoreAccountVerification = function() {
+                if (window.location.protocol === 'file:') {
+                    localStorage.setItem('accountVerified', 'true');
+                    console.log('Account verification status restored for local testing!');
+                    alert('Account verification restored! You can now log in.');
+                } else {
+                    console.log('This function only works in local testing mode (file:// protocol)');
+                    alert('This function only works in local testing mode.');
+                }
+            };
+
+            // Function to force login bypass (for persistent data integrity issues)
+        window.forceLoginBypass = function() {
+            if (window.location.protocol === 'file:') {
+                localStorage.setItem('accountVerified', 'true');
+                localStorage.setItem('forceLoginBypass', 'true');
+                console.log('Force login bypass enabled for local testing!');
+                alert('Force login bypass enabled! You can now log in with any credentials.');
+            } else {
+                console.log('This function only works in local testing mode (file:// protocol)');
+                alert('This function only works in local testing mode.');
+            }
+        };
+
+        // Function to check admin login status
+        window.checkAdminLoginStatus = function() {
+            console.log('=== ADMIN LOGIN STATUS CHECK ===');
+            const adminSession = localStorage.getItem('adminSession');
+            const adminAccount = localStorage.getItem('adminAccount');
+            
+            console.log('Admin Session:', adminSession);
+            console.log('Admin Account:', adminAccount);
+            
+            if (adminSession === 'true') {
+                console.log('✅ You are LOGGED IN as admin');
+                alert('You are currently LOGGED IN as admin.\n\nTo log out, go to the admin dashboard and click "Log Out".');
+            } else {
+                console.log('❌ You are LOGGED OUT from admin');
+                alert('You are currently LOGGED OUT from admin.\n\nYou can log in using the "Admin Login" button.');
+            }
+            
+            console.log('===============================');
+        };
+
+        // Function to force admin logout
+        window.forceAdminLogout = function() {
+            console.log('=== FORCING ADMIN LOGOUT ===');
+            localStorage.removeItem('adminSession');
+            localStorage.removeItem('adminAccount');
+            console.log('Admin session and account cleared');
+            alert('Admin logout forced! You are now logged out.');
+            console.log('=============================');
+        };
+
+            // Function to check admin data and restore if needed
+            window.checkAdminData = function() {
+                console.log('=== ADMIN DATA CHECK ===');
+                const adminData = localStorage.getItem('adminAccount');
+                const adminSession = localStorage.getItem('adminSession');
+                
+                console.log('Admin account data:', adminData);
+                console.log('Admin session:', adminSession);
+                
+                if (adminData) {
+                    try {
+                        const parsed = JSON.parse(adminData);
+                        console.log('Parsed admin data:', parsed);
+                        console.log('Admin username:', parsed.username);
+                        console.log('Admin role:', parsed.role);
+                    } catch (e) {
+                        console.error('Error parsing admin data:', e);
+                    }
+                } else {
+                    console.log('No admin account data found');
+                }
+                
+                // Check all localStorage keys for admin-related data
+                const keys = Object.keys(localStorage);
+                console.log('All localStorage keys:', keys);
+                keys.forEach(key => {
+                    if (key.includes('admin') || key.includes('Admin')) {
+                        console.log(`Admin key: ${key}`, localStorage.getItem(key));
+                    }
+                });
+                console.log('========================');
+            };
+
+            // Function to restore admin account (if you know the credentials)
+            window.restoreAdminAccount = function() {
+                if (window.location.protocol === 'file:') {
+                    const username = prompt('Enter your admin username:');
+                    if (!username) return;
+                    
+                    const password = prompt('Enter your admin password:');
+                    if (!password) return;
+                    
+                    // Create admin account with your credentials
+                    const adminAccount = {
+                        username: username,
+                        password: password,
+                        role: 'admin',
+                        createdAt: new Date().toISOString(),
+                        permissions: ['view_users', 'manage_campaigns', 'process_refunds', 'view_analytics']
+                    };
+                    
+                    localStorage.setItem('adminAccount', JSON.stringify(adminAccount));
+                    localStorage.setItem('adminSession', 'true');
+                    
+                    console.log('Admin account restored!');
+                    alert('Admin account restored! You can now log in as admin.');
+                } else {
+                    console.log('This function only works in local testing mode (file:// protocol)');
+                    alert('This function only works in local testing mode.');
+                }
+            };
+
+            // Admin login functionality
+            document.getElementById('adminLoginBtn').addEventListener('click', function() {
+                // Check if admin account exists
+                const adminData = localStorage.getItem('adminAccount');
+                
+                console.log('Admin login clicked');
+                console.log('Admin data exists:', !!adminData);
+                console.log('Admin data:', adminData);
+                
+                if (!adminData) {
+                    // No admin account exists - require master key to create one
+                    const masterKey = prompt('Enter master admin key to create admin account:');
+                    if (masterKey === 'K9mX7#pL2$vR8@nQ5') { // Secure admin master key
+                        createAdminAccount();
+                    } else if (masterKey !== null) {
+                        alert('Invalid master key. Admin account creation denied.');
+                    }
+                } else {
+                    // Admin account exists, show login prompt
+                    showAdminLogin();
+                }
+            });
+
+            function createAdminAccount() {
+                const adminUsername = prompt('Enter admin username:');
+                if (!adminUsername) return;
+                
+                const adminPassword = prompt('Enter admin password (min 8 characters):');
+                if (!adminPassword || adminPassword.length < 8) {
+                    alert('Password must be at least 8 characters long.');
+                    return;
+                }
+                
+                const confirmPassword = prompt('Confirm admin password:');
+                if (adminPassword !== confirmPassword) {
+                    alert('Passwords do not match.');
+                    return;
+                }
+                
+                // Create admin account
+                const adminAccount = {
+                    username: adminUsername,
+                    password: adminPassword,
+                    role: 'admin',
+                    createdAt: new Date().toISOString(),
+                    permissions: ['view_users', 'manage_campaigns', 'process_refunds', 'view_analytics']
+                };
+                
+                // Store admin account (in production, this should be encrypted)
+                localStorage.setItem('adminAccount', JSON.stringify(adminAccount));
+                localStorage.setItem('adminSession', 'true');
+                
+                alert('Admin account created successfully! You are now logged in as admin.');
+                window.location.href = 'admin-dashboard.html';
+            }
+
+            function showAdminLogin() {
+                const username = prompt('Admin Username:');
+                if (!username) return;
+                
+                const password = prompt('Admin Password:');
+                if (!password) return;
+                
+                // Verify admin credentials
+                const adminData = JSON.parse(localStorage.getItem('adminAccount'));
+                
+                if (adminData && adminData.username === username && adminData.password === password) {
+                    // Admin login successful
+                    localStorage.setItem('adminSession', 'true');
+                    alert('Admin login successful!');
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    alert('Invalid admin credentials.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
