@@ -1176,7 +1176,28 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateNavigationState();
             loadPremiumCollection();
+            setupMobileMenu();
         });
+
+        // Setup mobile menu functionality
+        function setupMobileMenu() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                console.log('Mobile menu elements found, setting up event listener');
+                mobileMenuButton.addEventListener('click', function() {
+                    console.log('Mobile menu button clicked');
+                    mobileMenu.classList.toggle('hidden');
+                    console.log('Mobile menu toggled, hidden class:', mobileMenu.classList.contains('hidden'));
+                });
+            } else {
+                console.log('Mobile menu elements not found:', {
+                    button: !!mobileMenuButton,
+                    menu: !!mobileMenu
+                });
+            }
+        }
 
         function updateNavigationState() {
             const loginNavLink = document.getElementById('loginNavLink');
@@ -1210,15 +1231,7 @@
                 if (mobileLogoutNavLink) mobileLogoutNavLink.classList.add('hidden');
             }
             
-            // Handle mobile menu toggle
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
+            // Mobile menu setup is handled separately
         }
 
         // Logout functionality
