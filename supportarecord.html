@@ -182,21 +182,24 @@
                         <a href="index.html" class="text-xl font-bold tracking-wider">WAX ENCOUNTERS</a>
                     </div>
                 </div>
+                <!-- Desktop Navigation -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-8">
                         <a href="index.html" class="hover:text-gray-300 transition-colors duration-200">Home</a>
                         <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
-                        <a href="supportarecord.html" class="text-pink-400 font-semibold">Support a Record</a>
                         <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                        <a href="supportarecord.html" class="text-pink-400 font-semibold">Support a Record</a>
                         <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
                         <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
                         <a href="login.html" id="loginNavLink" class="hover:text-gray-300 transition-colors duration-200">Log In</a>
                         <a href="account.html" id="accountNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">My Account</a>
-                        <a href="#" id="logoutNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">Log Out</a>
+                        <a href="javascript:void(0)" id="logoutNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">Log Out</a>
                     </div>
                 </div>
+                
+                <!-- Mobile menu button -->
                 <div class="md:hidden">
-                    <button class="text-gray-300 hover:text-white">
+                    <button type="button" id="mobile-menu-button" class="text-gray-300 hover:text-white focus:outline-none focus:text-white">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -204,10 +207,25 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile menu panel -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black bg-opacity-90 backdrop-filter backdrop-blur-lg border-t border-white border-opacity-10">
+                <a href="index.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Home</a>
+                <a href="about.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">About Us</a>
+                <a href="print.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                <a href="supportarecord.html" class="block px-3 py-2 text-base font-medium text-pink-400">Support a Record</a>
+                <a href="collection.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Collection</a>
+                <a href="contact.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Contact</a>
+                <a href="login.html" id="mobileLoginNavLink" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Log In</a>
+                <a href="account.html" id="mobileAccountNavLink" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200 hidden">My Account</a>
+                <a href="javascript:void(0)" id="mobileLogoutNavLink" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200 hidden">Log Out</a>
+            </div>
+        </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="min-h-[50vh] flex items-center justify-center relative overflow-hidden pt-16">
+    <section class="min-h-[50vh] flex items-center justify-center relative overflow-hidden pt-16 sm:pt-20">
         <div class="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
         <div class="aurora-background"></div>
         
@@ -232,6 +250,7 @@
                 <p class="text-base text-gray-300 max-w-2xl mx-auto leading-relaxed">
                     Support these incredible artists and be part of their musical journey.
                 </p>
+                
             </div>
 
             <!-- Album Grid -->
@@ -262,6 +281,114 @@
     </section>
 
     <script>
+        console.log('=== SCRIPT LOADING ===');
+        console.log('Support a Record page script is loading...');
+        
+        // Test if function is defined
+        setTimeout(() => {
+            console.log('handlePreOrderSubmit function exists:', typeof handlePreOrderSubmit);
+        }, 2000);
+        
+        // Add a global click handler to prevent navigation on pre-order buttons
+        document.addEventListener('click', function(e) {
+            console.log('=== ANY CLICK DETECTED ===');
+            console.log('Clicked element:', e.target.tagName, e.target.className);
+            
+            if (e.target.classList.contains('pre-order-button')) {
+                console.log('GLOBAL HANDLER: Pre-order button clicked, preventing navigation');
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Handle the pre-order button logic here
+                console.log('=== PRE-ORDER BUTTON CLICKED ===');
+                console.log('Button element:', e.target);
+                console.log('Button href:', e.target.getAttribute('href'));
+                console.log('Button data-record-id:', e.target.getAttribute('data-record-id'));
+                
+                // Get the record ID from the button's data attribute
+                const recordId = e.target.getAttribute('data-record-id');
+                
+                // Check if user is logged in
+                console.log('=== CHECKING LOGIN STATUS ===');
+                const isSessionValid = window.SecureStorageManager && window.SecureStorageManager.isSessionValid();
+                const isAccountVerified = localStorage.getItem('accountVerified') === 'true';
+                const hasAdminSession = localStorage.getItem('adminSession') === 'true';
+                
+                console.log('Raw localStorage values:');
+                console.log('- accountVerified:', localStorage.getItem('accountVerified'));
+                console.log('- adminSession:', localStorage.getItem('adminSession'));
+                console.log('- SecureStorageManager exists:', !!window.SecureStorageManager);
+                if (window.SecureStorageManager) {
+                    console.log('- Session valid:', window.SecureStorageManager.isSessionValid());
+                }
+                
+                const isLoggedIn = isSessionValid || isAccountVerified || hasAdminSession;
+                
+                console.log('Login check results:', {
+                    isSessionValid,
+                    isAccountVerified,
+                    hasAdminSession,
+                    isLoggedIn
+                });
+                
+                if (isLoggedIn) {
+                    // User is logged in, go to payment page with record ID
+                    console.log('User is logged in, going to payment page with record ID:', recordId);
+                    console.log('About to navigate to payment page...');
+                    
+                    // Debug: Check if the record exists in localStorage BEFORE navigation
+                    const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+                    const record = records.find(r => r.id === recordId);
+                    console.log('Record exists in localStorage:', !!record);
+                    console.log('All record IDs:', records.map(r => r.id));
+                    
+                    if (recordId) {
+                        console.log('Navigating to:', `payment.html?recordId=${recordId}&type=crowdfunding`);
+                        
+                        // Try multiple navigation methods
+                        try {
+                            console.log('Attempting navigation method 1: window.location.href');
+                            console.log('Target URL:', `payment.html?recordId=${recordId}&type=crowdfunding`);
+                            
+                            // Add a small delay to ensure all console output is shown
+                            setTimeout(() => {
+                                window.location.href = `payment.html?recordId=${recordId}&type=crowdfunding`;
+                            }, 100);
+                            
+                        } catch (error) {
+                            console.error('Navigation method 1 failed:', error);
+                            try {
+                                console.log('Attempting navigation method 2: window.location.assign');
+                                window.location.assign(`payment.html?recordId=${recordId}&type=crowdfunding`);
+                            } catch (error2) {
+                                console.error('Navigation method 2 failed:', error2);
+                                console.log('Attempting navigation method 3: window.open');
+                                window.open(`payment.html?recordId=${recordId}&type=crowdfunding`, '_self');
+                            }
+                        }
+                    } else {
+                        console.log('Navigating to: payment.html');
+                        window.location.href = 'payment.html';
+                    }
+                } else {
+                    // User is not logged in, go to login page
+                    console.log('User is not logged in, going to login page');
+                    console.log('About to navigate to login page...');
+                    
+                    // Add a delay to see console output before navigation
+                    setTimeout(() => {
+                        console.log('Navigating to: login.html');
+                        window.location.href = 'login.html';
+                    }, 5000); // 5 second delay
+                }
+                
+                return false;
+            }
+        }, true); // Use capture phase to run before other handlers
+        
+        // Note: Test click listener removed - using main global handler only
+        
         // Intersection Observer for section animations
         const observerOptions = {
             threshold: 0.1,
@@ -293,18 +420,7 @@
             }
         });
         
-        // Pre-order button interactions (excluding navigation buttons)
-        document.querySelectorAll('.pre-order-button').forEach(button => {
-            // Skip buttons that are meant for navigation (like "Start Your Campaign")
-            if (button.getAttribute('href') && !button.getAttribute('href').startsWith('#')) {
-                return;
-            }
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                // Add your pre-order logic here
-                alert('Pre-order functionality would be implemented here!');
-            });
-        });
+        // Note: Pre-order button interactions are now handled by event delegation below
         
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -320,59 +436,124 @@
             });
         });
 
-        // Check login status and handle pre-order button clicks
-        document.addEventListener('DOMContentLoaded', function() {
-            const preOrderButtons = document.querySelectorAll('.pre-order-button');
-            
-            preOrderButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    // Check if this is the "Start Your Campaign" button (should go to print.html)
-                    if (button.getAttribute('href') === 'print.html') {
-                        // Allow normal navigation to print.html
-                        return;
-                    }
-                    
-                    e.preventDefault();
-                    
-                    // Check if user is logged in
-                    if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
-                        // User is logged in, go to payment page
-                        window.location.href = 'payment.html';
-                    } else {
-                        // User is not logged in, go to login page
-                        window.location.href = 'login.html';
-                    }
-                });
-            });
-        });
+        // Note: Duplicate event listener removed - using main global handler only
 
         // Navigation state management
         document.addEventListener('DOMContentLoaded', function() {
             updateNavigationState();
+            
+            // Clear sample campaigns from localStorage
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            const filteredRecords = records.filter(record => !record.id.startsWith('sample-'));
+            if (filteredRecords.length !== records.length) {
+                localStorage.setItem('uploadedRecords', JSON.stringify(filteredRecords));
+                console.log('Sample campaigns cleared from localStorage');
+            }
+            
             loadCampaigns();
+            
+            // Add onclick handlers to pre-order buttons after they're created
+            setTimeout(() => {
+                console.log('=== SETTING UP PRE-ORDER BUTTON HANDLERS ===');
+                const buttons = document.querySelectorAll('.pre-order-button');
+                console.log('Found pre-order buttons:', buttons.length);
+                
+                buttons.forEach((button, index) => {
+                    const recordId = button.getAttribute('data-record-id');
+                    console.log(`Button ${index}: recordId = ${recordId}`);
+                    if (recordId) {
+                        // Remove any existing event listeners
+                        button.onclick = null;
+                        
+                        // Add event listener in capture phase to run before other handlers
+                        button.addEventListener('click', function(e) {
+                            alert('Pre-order button clicked! Record ID: ' + recordId);
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.stopImmediatePropagation();
+                            handlePreOrderClick(recordId);
+                        }, true); // Use capture phase
+                        
+                        console.log(`Attached event listener to button ${index}`);
+                    }
+                });
+            }, 1000);
+            
+            // Debug session status
+            console.log('=== SESSION DEBUG ===');
+            console.log('SecureStorageManager exists:', !!window.SecureStorageManager);
+            if (window.SecureStorageManager) {
+                console.log('Session valid:', window.SecureStorageManager.isSessionValid());
+                console.log('Session data:', window.SecureStorageManager.getSession());
+                console.log('Has user data:', window.SecureStorageManager.hasUserData());
+            }
+            console.log('Account verified (local):', localStorage.getItem('accountVerified'));
+            console.log('=====================');
         });
 
         function updateNavigationState() {
             const loginNavLink = document.getElementById('loginNavLink');
             const accountNavLink = document.getElementById('accountNavLink');
             const logoutNavLink = document.getElementById('logoutNavLink');
+            const mobileLoginNavLink = document.getElementById('mobileLoginNavLink');
+            const mobileAccountNavLink = document.getElementById('mobileAccountNavLink');
+            const mobileLogoutNavLink = document.getElementById('mobileLogoutNavLink');
             
             if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
                 // User is logged in
                 if (loginNavLink) loginNavLink.classList.add('hidden');
                 if (accountNavLink) accountNavLink.classList.remove('hidden');
                 if (logoutNavLink) logoutNavLink.classList.remove('hidden');
+                if (mobileLoginNavLink) mobileLoginNavLink.classList.add('hidden');
+                if (mobileAccountNavLink) mobileAccountNavLink.classList.remove('hidden');
+                if (mobileLogoutNavLink) mobileLogoutNavLink.classList.remove('hidden');
             } else {
                 // User is not logged in
                 if (loginNavLink) loginNavLink.classList.remove('hidden');
                 if (accountNavLink) accountNavLink.classList.add('hidden');
                 if (logoutNavLink) logoutNavLink.classList.add('hidden');
+                if (mobileLoginNavLink) mobileLoginNavLink.classList.remove('hidden');
+                if (mobileAccountNavLink) mobileAccountNavLink.classList.add('hidden');
+                if (mobileLogoutNavLink) mobileLogoutNavLink.classList.add('hidden');
             }
         }
 
-        // Logout functionality
+        // Logout functionality and mobile menu
         document.addEventListener('DOMContentLoaded', function() {
             const logoutButton = document.getElementById('logoutNavLink');
+            const mobileLogoutButton = document.getElementById('mobileLogoutNavLink');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            // Handle mobile menu toggle
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Handle mobile logout
+            if (mobileLogoutButton) {
+                mobileLogoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to log out?')) {
+                        // Clear session data
+                        localStorage.removeItem('adminSession');
+                        localStorage.removeItem('userSession');
+                        localStorage.removeItem('isLoggedIn');
+                        localStorage.removeItem('loginStatus');
+                        // Note: We keep accountVerified to avoid re-verification
+                        
+                        // Update navigation state
+                        updateNavigationState();
+                        
+                        // Close mobile menu
+                        if (mobileMenu) mobileMenu.classList.add('hidden');
+                        
+                        alert('You have been logged out successfully.');
+                    }
+                });
+            }
             
             if (logoutButton) {
                 logoutButton.addEventListener('click', function(e) {
@@ -380,6 +561,10 @@
                     
                     // Confirm logout
                     if (confirm('Are you sure you want to log out?')) {
+                        console.log('=== LOGOUT FUNCTION CALLED ===');
+                        console.log('Before logout - accountVerified:', localStorage.getItem('accountVerified'));
+                        console.log('Before logout - adminSession:', localStorage.getItem('adminSession'));
+                        
                         // Clear session data
                         if (window.SecureStorageManager) {
                             window.SecureStorageManager.clearSession();
@@ -391,10 +576,16 @@
                         localStorage.removeItem('verificationToken');
                         localStorage.removeItem('pendingVerificationEmail');
                         
-                        // Preserve account verification status (both local and production)
-                        // Users shouldn't need to re-verify after every logout
-                        console.log('Preserving account verification status for better UX');
-                        // Don't remove accountVerified and verifiedEmail
+                        // Clear session data but preserve email verification status
+                        // Users shouldn't need to re-verify their email after every logout
+                        localStorage.removeItem('adminSession');
+                        
+                        // Note: We're NOT removing 'accountVerified' because users shouldn't need to re-verify
+                        // their email after every logout. Email verification is a one-time process.
+                        
+                        console.log('Cleared all login indicators for proper logout');
+                        console.log('After logout - accountVerified:', localStorage.getItem('accountVerified'));
+                        console.log('After logout - adminSession:', localStorage.getItem('adminSession'));
                         
                         // Log security event
                         if (window.ServerValidation) {
@@ -417,16 +608,34 @@
             
             // Get uploaded records from localStorage
             const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            console.log('All records in localStorage:', records);
+            console.log('Total records found:', records.length);
             
-            // Filter crowdfunding campaigns
-            const campaigns = records.filter(record => 
-                record.type === 'crowdfunding' && 
-                record.status === 'campaign'
-            );
+            // Filter crowdfunding campaigns (include both active and pressing campaigns)
+            const campaigns = records.filter(record => {
+                const isCrowdfunding = record.type === 'crowdfunding';
+                const hasValidStatus = record.status === 'campaign' || record.status === 'active' || record.status === 'pressing' || !record.status;
+                console.log(`Record ${record.id}: type=${record.type}, status=${record.status}, isCrowdfunding=${isCrowdfunding}, hasValidStatus=${hasValidStatus}`);
+                return isCrowdfunding && hasValidStatus;
+            });
+            
+            console.log('Filtered crowdfunding campaigns:', campaigns);
+            console.log('Number of campaigns found:', campaigns.length);
             
             if (campaigns.length === 0) {
-                // Show sample campaigns if no uploaded campaigns exist
-                loadSampleCampaigns();
+                // No uploaded campaigns found - show empty state
+                console.log('No campaigns found, showing empty state');
+                campaignsGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="glass-card rounded-2xl p-8 max-w-md mx-auto">
+                            <h3 class="text-2xl font-bold mb-4">No Active Campaigns</h3>
+                            <p class="text-gray-300 mb-6">Check back soon for new crowdfunding campaigns!</p>
+                            <a href="collection.html" class="premium-button px-6 py-3 rounded-xl text-black font-semibold hover:scale-105 transition-transform duration-200 inline-block">
+                                Browse Collection
+                            </a>
+                        </div>
+                    </div>
+                `;
                 return;
             }
             
@@ -469,15 +678,20 @@
                         
                         <div class="flex justify-between items-center mb-2">
                             <span class="${layout.title} font-bold">€${campaign.price}</span>
-                            <span class="text-xs ${isFunded ? 'text-green-400 font-semibold' : 'text-gray-400'}">
-                                ${isFunded ? 'FUNDED!' : daysLeft > 0 ? daysLeft + ' days left' : 'Campaign ended'}
+                            <span class="text-xs ${isFunded ? 'text-green-400 font-semibold' : campaign.status === 'pressing' ? 'text-green-400 font-semibold' : 'text-gray-400'}">
+                                ${campaign.status === 'pressing' ? 'BUDGET REACHED!' : isFunded ? 'FUNDED!' : daysLeft > 0 ? daysLeft + ' days left' : 'Campaign ended'}
                             </span>
                         </div>
                         
-                        <a href="login.html" class="pre-order-button w-full ${layout.button} text-black font-semibold rounded-md text-xs mb-1 inline-block text-center">
-                            Pre-Order Now
-                        </a>
-                        <a href="#" class="block text-center text-gray-400 hover:text-white transition-colors duration-200 text-xs">
+                        ${campaign.status === 'pressing' ? 
+                            `<div class="w-full ${layout.button} text-white font-semibold rounded-md text-xs mb-1 inline-block text-center" style="background: #10b981; padding: 8px; text-align: center;">
+                                🎵 Proceeding to Press
+                            </div>` :
+                            `<div class="order-button w-full ${layout.button} text-black font-semibold rounded-md text-xs mb-1 inline-block text-center cursor-pointer" data-record-id="${campaign.id}" onclick="handlePreOrderClick('${campaign.id}'); return false;" style="background: white; padding: 8px; text-align: center;">
+                                Pre-Order Now
+                            </div>`
+                        }
+                        <a href="javascript:void(0)" class="block text-center text-gray-400 hover:text-white transition-colors duration-200 text-xs">
                             Listen on Spotify
                         </a>
                     </div>
@@ -497,6 +711,8 @@
             const sampleCampaigns = [
                 {
                     id: 'sample-1',
+                    type: 'crowdfunding',
+                    status: 'campaign',
                     albumTitle: 'Ethereal Dreams',
                     artistName: 'Luna Nova',
                     description: 'An ambient electronic journey through dreamscapes and cosmic soundscapes.',
@@ -504,10 +720,16 @@
                     genre: 'Ambient',
                     raised: 2450,
                     fundingGoal: 3500,
-                    daysLeft: 22
+                    backers: 70,
+                    campaignDays: 30,
+                    startDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 8 days ago
+                    daysLeft: 22,
+                    uploadedAt: new Date().toISOString()
                 },
                 {
                     id: 'sample-2',
+                    type: 'crowdfunding',
+                    status: 'campaign',
                     albumTitle: 'Midnight Jazz Sessions',
                     artistName: 'The Blue Note Collective',
                     description: 'Smooth jazz melodies that capture the essence of late-night city vibes.',
@@ -515,10 +737,16 @@
                     genre: 'Jazz',
                     raised: 1890,
                     fundingGoal: 3000,
-                    daysLeft: 45
+                    backers: 45,
+                    campaignDays: 60,
+                    startDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 15 days ago
+                    daysLeft: 45,
+                    uploadedAt: new Date().toISOString()
                 },
                 {
                     id: 'sample-3',
+                    type: 'crowdfunding',
+                    status: 'campaign',
                     albumTitle: 'Urban Beats & Rhymes',
                     artistName: 'Street Symphony',
                     description: 'Raw hip-hop energy with underground beats and conscious lyrics.',
@@ -526,9 +754,29 @@
                     genre: 'Hip-Hop',
                     raised: 2760,
                     fundingGoal: 3000,
-                    daysLeft: 8
+                    backers: 73,
+                    campaignDays: 30,
+                    startDate: new Date(Date.now() - 22 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 22 days ago
+                    daysLeft: 8,
+                    uploadedAt: new Date().toISOString()
                 }
             ];
+            
+            // Store sample campaigns in localStorage so they can be found by payment page
+            const existingRecords = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            console.log('Existing records before adding samples:', existingRecords);
+            
+            sampleCampaigns.forEach(sample => {
+                if (!existingRecords.find(r => r.id === sample.id)) {
+                    existingRecords.push(sample);
+                    console.log('Added sample campaign:', sample.id);
+                } else {
+                    console.log('Sample campaign already exists:', sample.id);
+                }
+            });
+            
+            localStorage.setItem('uploadedRecords', JSON.stringify(existingRecords));
+            console.log('Final records in localStorage:', JSON.parse(localStorage.getItem('uploadedRecords')));
             
             campaignsGrid.innerHTML = sampleCampaigns.map((campaign, index) => {
                 const progressPercentage = Math.min((campaign.raised / campaign.fundingGoal) * 100, 100);
@@ -572,10 +820,15 @@
                             </span>
                         </div>
                         
-                        <a href="login.html" class="pre-order-button w-full ${layout.button} text-black font-semibold rounded-md text-xs mb-1 inline-block text-center">
-                            Pre-Order Now
-                        </a>
-                        <a href="#" class="block text-center text-gray-400 hover:text-white transition-colors duration-200 text-xs">
+                        ${campaign.status === 'pressing' ? 
+                            `<div class="w-full ${layout.button} text-white font-semibold rounded-md text-xs mb-1 inline-block text-center" style="background: #10b981; padding: 8px; text-align: center;">
+                                🎵 Proceeding to Press
+                            </div>` :
+                            `<div class="order-button w-full ${layout.button} text-black font-semibold rounded-md text-xs mb-1 inline-block text-center cursor-pointer" data-record-id="${campaign.id}" onclick="handlePreOrderClick('${campaign.id}'); return false;" style="background: white; padding: 8px; text-align: center;">
+                                Pre-Order Now
+                            </div>`
+                        }
+                        <a href="javascript:void(0)" class="block text-center text-gray-400 hover:text-white transition-colors duration-200 text-xs">
                             Listen on Spotify
                         </a>
                     </div>
@@ -601,6 +854,94 @@
         function viewProductDetail(recordId) {
             window.location.href = `product-detail.html?id=${recordId}`;
         }
+        
+        // Form submission handler for pre-order buttons
+        function handlePreOrderSubmit(event, recordId) {
+            console.log('=== FORM SUBMISSION FUNCTION CALLED ===');
+            alert('Pre-order form submitted! Record ID: ' + recordId);
+            console.log('=== PRE-ORDER FORM SUBMISSION ===');
+            console.log('Record ID:', recordId);
+            
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Check if user is logged in
+            console.log('=== CHECKING LOGIN STATUS ===');
+            const isSessionValid = window.SecureStorageManager && window.SecureStorageManager.isSessionValid();
+            const isAccountVerified = localStorage.getItem('accountVerified') === 'true';
+            const hasAdminSession = localStorage.getItem('adminSession') === 'true';
+            
+            console.log('Raw localStorage values:');
+            console.log('- accountVerified:', localStorage.getItem('accountVerified'));
+            console.log('- adminSession:', localStorage.getItem('adminSession'));
+            console.log('- SecureStorageManager exists:', !!window.SecureStorageManager);
+            if (window.SecureStorageManager) {
+                console.log('- Session valid:', window.SecureStorageManager.isSessionValid());
+            }
+            
+            const isLoggedIn = isSessionValid || isAccountVerified || hasAdminSession;
+            
+            console.log('Login check results:', {
+                isSessionValid,
+                isAccountVerified,
+                hasAdminSession,
+                isLoggedIn
+            });
+            
+            if (isLoggedIn) {
+                // User is logged in, go to payment page with record ID
+                console.log('User is logged in, going to payment page with record ID:', recordId);
+                window.location.href = `payment.html?recordId=${recordId}&type=crowdfunding`;
+            } else {
+                // User is not logged in, go to login page
+                console.log('User is not logged in, going to login page');
+                window.location.href = 'login.html';
+            }
+            
+            return false; // Prevent form submission
+        }
+        
+        // Direct pre-order button handler (keeping for compatibility)
+        function handlePreOrderClick(recordId) {
+            console.log('=== DIRECT PRE-ORDER CLICK HANDLER ===');
+            console.log('Record ID:', recordId);
+            
+            // Check if user is logged in
+            console.log('=== CHECKING LOGIN STATUS ===');
+            const isSessionValid = window.SecureStorageManager && window.SecureStorageManager.isSessionValid();
+            const hasAdminSession = localStorage.getItem('adminSession') === 'true';
+            
+            console.log('Raw localStorage values:');
+            console.log('- adminSession:', localStorage.getItem('adminSession'));
+            console.log('- SecureStorageManager exists:', !!window.SecureStorageManager);
+            if (window.SecureStorageManager) {
+                console.log('- Session valid:', window.SecureStorageManager.isSessionValid());
+            }
+            
+            // Only check session validity and admin session for login status
+            // accountVerified is for email verification, not login status
+            const isLoggedIn = isSessionValid || hasAdminSession;
+            
+            console.log('Login check results:', {
+                isSessionValid,
+                hasAdminSession,
+                isLoggedIn
+            });
+            
+            // Debug login status (remove alert for production)
+            console.log('Final login status:', { isSessionValid, hasAdminSession, isLoggedIn });
+            
+            if (isLoggedIn) {
+                // User is logged in, go to payment page with record ID
+                console.log('User is logged in, going to payment page with record ID:', recordId);
+                window.location.href = `payment.html?recordId=${recordId}&type=crowdfunding`;
+            } else {
+                // User is not logged in, go to login page
+                console.log('User is not logged in, going to login page');
+                window.location.href = 'login.html';
+            }
+        }
+        
     </script>
 </body>
 </html>

@@ -49,8 +49,8 @@
                     <div class="ml-10 flex items-baseline space-x-8">
                         <a href="index.html#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
                         <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
-                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
                         <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
                         <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
                         <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
                         <a href="login.html" id="loginNavLink" class="hover:text-gray-300 transition-colors duration-200">Log In</a>
@@ -423,6 +423,27 @@
 
         function updatePreOrderButton(record) {
             const preOrderButton = document.getElementById('preOrderButton');
+            
+            // Check if campaign has been ended (status is "pressing")
+            if (record.status === 'pressing') {
+                // Campaign has ended - hide the pre-order button and show status message
+                preOrderButton.style.display = 'none';
+                
+                // Create and show the "Budget Reached" message
+                const statusMessage = document.createElement('div');
+                statusMessage.className = 'text-center p-6 bg-gradient-to-r from-green-600 to-green-700 rounded-xl border border-green-500';
+                statusMessage.innerHTML = `
+                    <div class="text-2xl font-bold text-white mb-2">🎵 BUDGET REACHED!</div>
+                    <div class="text-lg text-green-100">Proceeding to Press</div>
+                    <div class="text-sm text-green-200 mt-2">This campaign has ended and is now being prepared for production.</div>
+                `;
+                
+                // Insert the message after the pre-order button
+                preOrderButton.parentNode.insertBefore(statusMessage, preOrderButton.nextSibling);
+                
+                console.log('Campaign ended - pre-order button hidden and status message shown');
+                return;
+            }
             
             if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
                 // User is logged in - go to payment

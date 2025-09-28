@@ -9,6 +9,7 @@
     <script src="js/security.js"></script>
     <script src="js/secure-storage.js"></script>
     <script src="js/server-validation.js"></script>
+    <script src="js/purchase-tracker.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -205,8 +206,8 @@
                     <div class="ml-10 flex items-baseline space-x-8">
                         <a href="#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
                         <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
-                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
                         <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
                         <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
                         <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
                         <a href="login.html" id="loginNavLink" class="hover:text-gray-300 transition-colors duration-200">Log In</a>
@@ -638,66 +639,8 @@
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="luxury-card rounded-2xl p-6 section-fade shimmer-effect hover:scale-105 transition-transform duration-500" style="transition-delay: 100ms;">
-                    <div class="aspect-square rounded-xl mb-6 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
-                             alt="Independent Rock" 
-                             class="w-full h-full object-cover">
-                        <div class="absolute inset-0 luxury-gradient"></div>
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <div class="glass-card rounded-lg p-3">
-                                <h4 class="text-sm font-semibold">Independent Rock</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Blood Red Vinyl</h3>
-                    <p class="text-gray-400 mb-4">Rigid board cover with artistic inserts and narrative lyrics</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500">180g Premium</span>
-                        <span class="text-white font-semibold">€45</span>
-                    </div>
-                </div>
-                
-                <div class="luxury-card rounded-2xl p-6 section-fade shimmer-effect hover:scale-105 transition-transform duration-500" style="transition-delay: 200ms;">
-                    <div class="aspect-square rounded-xl mb-6 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
-                             alt="Contemporary Jazz" 
-                             class="w-full h-full object-cover">
-                        <div class="absolute inset-0 luxury-gradient"></div>
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <div class="glass-card rounded-lg p-3">
-                                <h4 class="text-sm font-semibold">Contemporary Jazz</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Marbled Vinyl</h3>
-                    <p class="text-gray-400 mb-4">Blue-purple marble effect with sustainable packaging</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500">180g Premium</span>
-                        <span class="text-white font-semibold">€48</span>
-                    </div>
-                </div>
-                
-                <div class="luxury-card rounded-2xl p-6 section-fade shimmer-effect hover:scale-105 transition-transform duration-500" style="transition-delay: 300ms;">
-                    <div class="aspect-square rounded-xl mb-6 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
-                             alt="Electronic" 
-                             class="w-full h-full object-cover">
-                        <div class="absolute inset-0 luxury-gradient"></div>
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <div class="glass-card rounded-lg p-3">
-                                <h4 class="text-sm font-semibold">Electronic</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Transparent Vinyl</h3>
-                    <p class="text-gray-400 mb-4">Crystal effect with holographic inserts</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500">180g Premium</span>
-                        <span class="text-white font-semibold">€52</span>
-                    </div>
-                </div>
+            <div id="premiumCollectionGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Records will be loaded dynamically here -->
             </div>
         </div>
     </section>
@@ -829,9 +772,395 @@
             });
         }
 
+        // Load premium collection records
+        function loadPremiumCollection() {
+            const collectionGrid = document.getElementById('premiumCollectionGrid');
+            if (!collectionGrid) {
+                console.log('Premium collection grid not found');
+                return;
+            }
+
+            try {
+                const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+                console.log('All uploaded records:', records);
+                const immediateRecords = records.filter(record => record.type === 'immediate');
+                console.log('Immediate sale records:', immediateRecords);
+
+                console.log('About to check if immediateRecords.length === 0');
+                console.log('immediateRecords.length:', immediateRecords.length);
+                
+                if (immediateRecords.length === 0) {
+                    console.log('No immediate records found, showing sample records');
+                    // Show sample records if no uploaded records exist
+                    collectionGrid.innerHTML = `
+                        <div class="luxury-card rounded-2xl p-6 section-fade shimmer-effect hover:scale-105 transition-transform duration-500" style="transition-delay: 100ms;">
+                            <div class="aspect-square rounded-xl mb-6 relative overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                     alt="Independent Rock" 
+                                     class="w-full h-full object-cover">
+                                <div class="absolute inset-0 luxury-gradient"></div>
+                                <div class="absolute bottom-4 left-4 right-4">
+                                    <div class="glass-card rounded-lg p-3">
+                                        <h4 class="text-sm font-semibold">Independent Rock</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Blood Red Vinyl</h3>
+                            <p class="text-gray-400 mb-4">Rigid board cover with artistic inserts and narrative lyrics</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">180g Premium</span>
+                                <span class="text-white font-semibold">€45</span>
+                            </div>
+                        </div>
+                        
+                        <div class="luxury-card rounded-2xl p-6 section-fade shimmer-effect hover:scale-105 transition-transform duration-500" style="transition-delay: 200ms;">
+                            <div class="aspect-square rounded-xl mb-6 relative overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                     alt="Contemporary Jazz" 
+                                     class="w-full h-full object-cover">
+                                <div class="absolute inset-0 luxury-gradient"></div>
+                                <div class="absolute bottom-4 left-4 right-4">
+                                    <div class="glass-card rounded-lg p-3">
+                                        <h4 class="text-sm font-semibold">Contemporary Jazz</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Marbled Vinyl</h3>
+                            <p class="text-gray-400 mb-4">Blue-purple marble effect with sustainable packaging</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">180g Premium</span>
+                                <span class="text-white font-semibold">€48</span>
+                            </div>
+                        </div>
+                        
+                        <div class="luxury-card rounded-2xl p-6 section-fade shimmer-effect hover:scale-105 transition-transform duration-500" style="transition-delay: 300ms;">
+                            <div class="aspect-square rounded-xl mb-6 relative overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                     alt="Electronic" 
+                                     class="w-full h-full object-cover">
+                                <div class="absolute inset-0 luxury-gradient"></div>
+                                <div class="absolute bottom-4 left-4 right-4">
+                                    <div class="glass-card rounded-lg p-3">
+                                        <h4 class="text-sm font-semibold">Electronic</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Transparent Vinyl</h3>
+                            <p class="text-gray-400 mb-4">Crystal effect with holographic inserts</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">180g Premium</span>
+                                <span class="text-white font-semibold">€52</span>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Display actual uploaded records
+                console.log('Found immediate records, displaying them...');
+                console.log('Records to display:', immediateRecords);
+                collectionGrid.innerHTML = immediateRecords.map((record, index) => {
+                    console.log(`Processing record ${index + 1}:`, record);
+                    return `
+                    <div style="background: #1a1a1a; border-radius: 16px; padding: 24px; margin: 16px; border: 1px solid #333; cursor: pointer; transition: transform 0.3s;" onclick="viewCollectionDetail('${record.id}')">
+                        <div style="width: 100%; aspect-ratio: 1; border-radius: 12px; margin-bottom: 24px; position: relative; overflow: hidden;">
+                            <img src="${record.coverImage || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'}" 
+                                 alt="${record.albumTitle}" 
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 12px; color: white;">${record.albumTitle}</h3>
+                        <p style="color: #9ca3af; margin-bottom: 16px;">${record.description || 'Premium vinyl record'}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 14px; color: #6b7280;">${record.quantity || 'Limited Edition'}</span>
+                            <span style="color: white; font-weight: 600;">€${record.price || '35'}</span>
+                        </div>
+                    </div>
+                `;
+                }).join('');
+                
+                console.log('Records HTML generated and inserted into grid');
+                
+                // Visual debugging - check if grid has content
+                console.log('Grid element:', collectionGrid);
+                console.log('Grid innerHTML length:', collectionGrid.innerHTML.length);
+                console.log('Grid children count:', collectionGrid.children.length);
+                
+                // Check if records have large image data
+                immediateRecords.forEach((record, index) => {
+                    console.log(`Record ${index + 1} image data length:`, record.coverImage ? record.coverImage.length : 'No image');
+                    console.log(`Record ${index + 1} image URL:`, record.coverImage ? record.coverImage.substring(0, 100) + '...' : 'No image');
+                    if (record.coverImage && record.coverImage.length > 1000) {
+                        console.log(`Record ${index + 1} has large image data: ${record.coverImage.length} characters`);
+                    }
+                });
+                
+                // Visual refresh complete
+                console.log('Premium collection loaded successfully');
+
+            } catch (error) {
+                console.error('Error loading premium collection:', error);
+            }
+        }
+
+        // Function to view collection detail
+        function viewCollectionDetail(recordId) {
+            window.location.href = `collection-product-detail.html?recordId=${recordId}`;
+        }
+
+        // Debug function to check uploaded records
+        window.debugPremiumCollection = function() {
+            console.log('=== PREMIUM COLLECTION DEBUG ===');
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            console.log('All records in localStorage:', records);
+            console.log('Number of records:', records.length);
+            
+            const immediateRecords = records.filter(record => record.type === 'immediate');
+            console.log('Immediate sale records:', immediateRecords);
+            console.log('Number of immediate records:', immediateRecords.length);
+            
+            if (immediateRecords.length > 0) {
+                console.log('First immediate record:', immediateRecords[0]);
+            }
+            
+            // Force reload the collection
+            loadPremiumCollection();
+            console.log('Collection reloaded');
+            console.log('===============================');
+        };
+
+        // Simple function to force refresh the collection
+        window.refreshPremiumCollection = function() {
+            console.log('Refreshing premium collection...');
+            loadPremiumCollection();
+        };
+
+        // Test function to manually insert content
+        window.testGrid = function() {
+            const grid = document.getElementById('premiumCollectionGrid');
+            if (grid) {
+                grid.innerHTML = '<div style="background: yellow; padding: 20px; margin: 10px;">TEST CONTENT - If you see this, the grid is working!</div>';
+                console.log('Test content inserted into grid');
+            } else {
+                console.log('Grid not found!');
+            }
+        };
+
+        // Function to check record data details
+        window.checkRecordData = function() {
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            const immediateRecords = records.filter(record => record.type === 'immediate');
+            
+            console.log('=== RECORD DATA ANALYSIS ===');
+            immediateRecords.forEach((record, index) => {
+                console.log(`Record ${index + 1}:`, {
+                    id: record.id,
+                    albumTitle: record.albumTitle,
+                    artistName: record.artistName,
+                    coverImageLength: record.coverImage ? record.coverImage.length : 'No image',
+                    albumImagesCount: record.albumImages ? record.albumImages.length : 0,
+                    price: record.price,
+                    quantity: record.quantity
+                });
+            });
+            console.log('============================');
+        };
+
+        // Function to inspect grid content
+        window.inspectGrid = function() {
+            const grid = document.getElementById('premiumCollectionGrid');
+            if (grid) {
+                console.log('=== GRID INSPECTION ===');
+                console.log('Grid HTML length:', grid.innerHTML.length);
+                console.log('Grid children:', grid.children);
+                console.log('First child:', grid.children[0]);
+                console.log('Grid computed style:', window.getComputedStyle(grid));
+                console.log('Grid visible:', grid.offsetWidth, 'x', grid.offsetHeight);
+                console.log('======================');
+            }
+        };
+
+        // Function to fix large images by replacing with placeholders
+        window.fixLargeImages = function() {
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            const immediateRecords = records.filter(record => record.type === 'immediate');
+            
+            console.log('=== FIXING LARGE IMAGES ===');
+            let fixed = false;
+            
+            immediateRecords.forEach((record, index) => {
+                if (record.coverImage && record.coverImage.length > 10000) {
+                    console.log(`Fixing record ${index + 1}: ${record.albumTitle}`);
+                    // Replace with a simple placeholder
+                    record.coverImage = `https://via.placeholder.com/300x300/1a1a1a/ffffff?text=${encodeURIComponent(record.albumTitle)}`;
+                    fixed = true;
+                }
+            });
+            
+            if (fixed) {
+                localStorage.setItem('uploadedRecords', JSON.stringify(records));
+                console.log('Images fixed! Refreshing collection...');
+                loadPremiumCollection();
+            } else {
+                console.log('No large images found to fix');
+            }
+            console.log('==========================');
+        };
+
+        // Function to restore original images with compression
+        window.restoreOriginalImages = function() {
+            console.log('=== RESTORING ORIGINAL IMAGES ===');
+            
+            // First, let's check if we have backup data
+            const backupData = localStorage.getItem('originalImageBackup');
+            if (backupData) {
+                console.log('Found backup data, restoring...');
+                const backup = JSON.parse(backupData);
+                const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+                
+                records.forEach(record => {
+                    if (backup[record.id]) {
+                        console.log(`Restoring image for ${record.albumTitle}`);
+                        record.coverImage = backup[record.id];
+                    }
+                });
+                
+                localStorage.setItem('uploadedRecords', JSON.stringify(records));
+                console.log('Original images restored! Refreshing collection...');
+                loadPremiumCollection();
+            } else {
+                console.log('No backup found. Let me check what images we have...');
+                
+                // Check if we have the original large images stored elsewhere
+                const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+                const immediateRecords = records.filter(record => record.type === 'immediate');
+                
+                immediateRecords.forEach((record, index) => {
+                    console.log(`Record ${index + 1} (${record.albumTitle}):`);
+                    console.log('- Current image length:', record.coverImage ? record.coverImage.length : 'No image');
+                    console.log('- Image type:', record.coverImage ? record.coverImage.substring(0, 50) : 'No image');
+                });
+                
+                console.log('If you want to restore original images, you may need to re-upload them.');
+            }
+            console.log('==================================');
+        };
+
+        // Function to create compressed images from large Base64 data
+        window.compressImages = function() {
+            console.log('=== COMPRESSING IMAGES ===');
+            
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            const immediateRecords = records.filter(record => record.type === 'immediate');
+            let compressed = false;
+            
+            immediateRecords.forEach((record, index) => {
+                if (record.coverImage && record.coverImage.startsWith('data:image/')) {
+                    console.log(`Compressing image for ${record.albumTitle}...`);
+                    
+                    // Create a new image element to compress
+                    const img = new Image();
+                    img.onload = function() {
+                        // Create canvas for compression
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Set canvas size (max 400x400 for web display)
+                        const maxSize = 400;
+                        let { width, height } = img;
+                        
+                        if (width > height) {
+                            if (width > maxSize) {
+                                height = (height * maxSize) / width;
+                                width = maxSize;
+                            }
+                        } else {
+                            if (height > maxSize) {
+                                width = (width * maxSize) / height;
+                                height = maxSize;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // Draw and compress
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7); // 70% quality
+                        
+                        // Update record
+                        record.coverImage = compressedDataUrl;
+                        console.log(`Compressed ${record.albumTitle}: ${compressedDataUrl.length} characters`);
+                        
+                        // Save and reload if this is the last image
+                        if (index === immediateRecords.length - 1) {
+                            localStorage.setItem('uploadedRecords', JSON.stringify(records));
+                            console.log('All images compressed! Refreshing collection...');
+                            loadPremiumCollection();
+                        }
+                    };
+                    
+                    img.src = record.coverImage;
+                    compressed = true;
+                }
+            });
+            
+            if (!compressed) {
+                console.log('No images found to compress');
+            }
+            console.log('==========================');
+        };
+
+        // Function to create simple colored placeholders
+        window.createSimplePlaceholders = function() {
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            const immediateRecords = records.filter(record => record.type === 'immediate');
+            
+            console.log('=== CREATING SIMPLE PLACEHOLDERS ===');
+            let fixed = false;
+            
+            immediateRecords.forEach((record, index) => {
+                console.log(`Creating placeholder for record ${index + 1}: ${record.albumTitle}`);
+                // Create a simple SVG placeholder
+                const colors = ['#1a1a1a', '#2a2a2a', '#3a3a3a', '#4a4a4a'];
+                const color = colors[index % colors.length];
+                record.coverImage = `data:image/svg+xml;base64,${btoa(`
+                    <svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="300" height="300" fill="${color}"/>
+                        <text x="150" y="150" font-family="Arial" font-size="24" fill="white" text-anchor="middle" dy=".3em">${record.albumTitle}</text>
+                    </svg>
+                `)}`;
+                fixed = true;
+            });
+            
+            if (fixed) {
+                localStorage.setItem('uploadedRecords', JSON.stringify(records));
+                console.log('Simple placeholders created! Refreshing collection...');
+                loadPremiumCollection();
+            }
+            console.log('====================================');
+        };
+
+        // Function to force clear and reload
+        window.forceReload = function() {
+            console.log('=== FORCE RELOAD ===');
+            const grid = document.getElementById('premiumCollectionGrid');
+            if (grid) {
+                grid.innerHTML = '';
+                console.log('Grid cleared');
+            }
+            
+            // Wait a moment then reload
+            setTimeout(() => {
+                console.log('Reloading collection...');
+                loadPremiumCollection();
+            }, 100);
+            console.log('==================');
+        };
+
         // Navigation state management
         document.addEventListener('DOMContentLoaded', function() {
             updateNavigationState();
+            loadPremiumCollection();
         });
 
         function updateNavigationState() {

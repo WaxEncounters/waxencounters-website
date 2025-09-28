@@ -497,11 +497,14 @@
                         <p class="text-xs text-gray-500 mt-1">${progressPercent.toFixed(1)}% funded ${campaign.daysLeft > 0 ? `• ${campaign.daysLeft} days left` : ''}</p>
                     </div>
                     <div class="flex space-x-2">
-                        <button onclick="manageCampaign('${campaign.id}')" class="premium-button px-3 py-1 text-black font-semibold rounded text-xs">
-                            Manage
-                        </button>
                         <button onclick="viewCampaignDetails('${campaign.id}')" class="glass-card px-3 py-1 rounded text-xs hover:bg-white hover:bg-opacity-10">
                             Details
+                        </button>
+                        <button onclick="endCampaign('${campaign.id}')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs font-semibold transition-colors duration-200">
+                            End Campaign
+                        </button>
+                        <button onclick="deleteCampaign('${campaign.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-semibold transition-colors duration-200">
+                            Delete
                         </button>
                     </div>
                 `;
@@ -904,9 +907,108 @@
         // Make debug function globally available
         window.debugUserData = debugUserData;
 
-        function manageCampaign(campaignId) {
-            alert(`Manage Campaign: ${campaignId}\n\nThis would allow you to:\n- Update campaign status\n- Process refunds\n- Manage shipping\n- Contact backers`);
-        }
+        // Function to check what user data exists in localStorage
+        window.checkAllUserData = function() {
+            console.log('=== COMPLETE USER DATA CHECK ===');
+            
+            // Check all localStorage keys
+            const allKeys = Object.keys(localStorage);
+            console.log('All localStorage keys:', allKeys);
+            
+            // Check for different types of user data
+            const userDataKeys = allKeys.filter(key => 
+                key.includes('user') || 
+                key.includes('User') || 
+                key.includes('account') || 
+                key.includes('wax_encounters') ||
+                key.includes('verified') ||
+                key.includes('cached')
+            );
+            
+            console.log('User-related keys found:', userDataKeys);
+            
+            userDataKeys.forEach(key => {
+                try {
+                    const value = localStorage.getItem(key);
+                    console.log(`Key: ${key}`);
+                    console.log(`Value:`, value);
+                    if (value && value.startsWith('{')) {
+                        const parsed = JSON.parse(value);
+                        console.log(`Parsed:`, parsed);
+                    }
+                    console.log('---');
+                } catch (e) {
+                    console.log(`Key: ${key} - Error parsing:`, e.message);
+                }
+            });
+            
+            // Check if you can log in normally
+            console.log('Can you log in normally? Try logging in and then check this again.');
+            console.log('===============================');
+        };
+
+        // Function to manually restore user data to admin dashboard
+        window.restoreUserToAdminDashboard = function() {
+            console.log('=== MANUAL USER RESTORATION ===');
+            
+            // Check if you can log in normally first
+            const canLogin = window.SecureStorageManager && window.SecureStorageManager.hasUserData();
+            console.log('Can login normally:', canLogin);
+            
+            if (!canLogin) {
+                alert('No user data found. Please log in normally first, then try this function again.');
+                return;
+            }
+            
+            // Try to get user data
+            const userData = localStorage.getItem('userData');
+            const verifiedEmail = localStorage.getItem('verifiedEmail');
+            const accountVerified = localStorage.getItem('accountVerified');
+            
+            console.log('User data exists:', !!userData);
+            console.log('Verified email:', verifiedEmail);
+            console.log('Account verified:', accountVerified);
+            
+            if (userData || verifiedEmail || accountVerified) {
+                // Create a simple user record for the admin dashboard
+                const simpleUser = {
+                    firstName: 'User',
+                    lastName: 'Account',
+                    email: verifiedEmail || 'user@example.com',
+                    username: verifiedEmail ? verifiedEmail.split('@')[0] : 'user',
+                    phone: 'Not provided',
+                    shippingAddress: 'Not provided',
+                    iban: 'Not provided',
+                    bic: 'Not provided',
+                    bankAccountOwner: 'Not provided',
+                    preOrders: [],
+                    totalSpent: 0
+                };
+                
+                // Add to admin user records
+                const adminUserKey = `admin_user_${Date.now()}`;
+                const adminUserRecord = {
+                    email: simpleUser.email,
+                    username: simpleUser.username,
+                    fullName: `${simpleUser.firstName} ${simpleUser.lastName}`,
+                    verifiedAt: new Date().toISOString(),
+                    source: 'manual_restoration'
+                };
+                
+                localStorage.setItem(adminUserKey, JSON.stringify(adminUserRecord));
+                console.log('Created admin user record:', adminUserRecord);
+                
+                alert('User data restored to admin dashboard! Click "Refresh Data" to see it.');
+                
+                // Refresh the dashboard
+                loadUsersData();
+            } else {
+                alert('No user data found. Please create a new account or log in first.');
+            }
+            
+            console.log('===============================');
+        };
+
 
         function viewCampaignDetails(campaignId) {
             alert(`Campaign Details: ${campaignId}\n\nThis would show:\n- Detailed campaign information\n- Backer list\n- Financial breakdown\n- Timeline and milestones`);
@@ -1029,6 +1131,132 @@ ${record.description || 'No description provided'}
                 updateStatistics();
                 
                 console.log('Record completely deleted from all locations:', recordId);
+            }
+        }
+
+        // Campaign management functions
+        function endCampaign(campaignId) {
+            console.log('Ending campaign:', campaignId);
+            
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            const campaign = records.find(r => r.id === campaignId);
+            
+            if (!campaign) {
+                alert('Campaign not found!');
+                return;
+            }
+
+            // Check if campaign is already ended
+            if (campaign.status === 'ended' || campaign.status === 'pressing') {
+                alert('This campaign has already been ended!');
+                return;
+            }
+
+            // Show confirmation dialog
+            const confirmMessage = `🎵 End Campaign & Proceed to Press\n\n` +
+                `"${campaign.albumTitle}" by ${campaign.artistName}\n\n` +
+                `Current Status:\n` +
+                `• Raised: $${campaign.raised || 0}\n` +
+                `• Goal: $${campaign.fundingGoal || 0}\n` +
+                `• Backers: ${campaign.backers || 0}\n\n` +
+                `This will:\n` +
+                `• Stop accepting new pre-orders\n` +
+                `• Show "Proceeding to Press" status\n` +
+                `• Keep campaign visible on Support a Record page\n` +
+                `• Allow you to finance any remaining amount\n\n` +
+                `Are you sure you want to end this campaign?`;
+            
+            if (confirm(confirmMessage)) {
+                // Update campaign status
+                campaign.status = 'pressing';
+                campaign.endedAt = new Date().toISOString();
+                campaign.endedBy = 'admin';
+                
+                // Update localStorage
+                const updatedRecords = records.map(r => r.id === campaignId ? campaign : r);
+                localStorage.setItem('uploadedRecords', JSON.stringify(updatedRecords));
+                
+                // Show success message
+                alert(`✅ Campaign Ended Successfully!\n\n` +
+                      `"${campaign.albumTitle}" is now proceeding to press.\n\n` +
+                      `• No new pre-orders will be accepted\n` +
+                      `• Campaign remains visible on Support a Record page\n` +
+                      `• Status shows "Proceeding to Press"`);
+                
+                // Refresh dashboard
+                loadCampaignsData();
+                updateStatistics();
+                
+                console.log('Campaign ended and moved to pressing phase:', campaignId);
+            }
+        }
+
+        function deleteCampaign(campaignId) {
+            console.log('Deleting campaign:', campaignId);
+            
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            const campaign = records.find(r => r.id === campaignId);
+            
+            if (!campaign) {
+                alert('Campaign not found!');
+                return;
+            }
+
+            // Show clean confirmation dialog
+            const confirmMessage = `🗑️ Delete Campaign\n\n` +
+                `"${campaign.albumTitle}" by ${campaign.artistName}\n\n` +
+                `This will permanently remove the campaign from:\n` +
+                `• Support a Record page\n` +
+                `• All user pre-orders\n` +
+                `• Campaign progress tracking\n\n` +
+                `This action cannot be undone.\n\n` +
+                `Are you sure you want to delete this campaign?`;
+            
+            if (confirm(confirmMessage)) {
+                // Remove the campaign from the main records array
+                const updatedRecords = records.filter(r => r.id !== campaignId);
+                
+                // Update localStorage with cleaned records
+                localStorage.setItem('uploadedRecords', JSON.stringify(updatedRecords));
+                
+                // Clean up any related orders that reference this campaign
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                const updatedOrders = orders.filter(order => order.recordId !== campaignId);
+                localStorage.setItem('orders', JSON.stringify(updatedOrders));
+                
+                // Clean up any user pre-orders that reference this campaign
+                const allUserKeys = Object.keys(localStorage).filter(key => key.startsWith('wax_encounters_user_data_'));
+                allUserKeys.forEach(userKey => {
+                    try {
+                        const userData = JSON.parse(localStorage.getItem(userKey) || '{}');
+                        if (userData.data && userData.data.preOrders) {
+                            const updatedPreOrders = userData.data.preOrders.filter(preOrder => preOrder.recordId !== campaignId);
+                            userData.data.preOrders = updatedPreOrders;
+                            localStorage.setItem(userKey, JSON.stringify(userData));
+                        }
+                    } catch (error) {
+                        console.warn('Could not update user pre-orders for key:', userKey, error);
+                    }
+                });
+                
+                // Clean up any cached display data that might reference this campaign
+                const cachedData = JSON.parse(localStorage.getItem('cachedDisplayData') || '{}');
+                if (cachedData.preOrders) {
+                    cachedData.preOrders = cachedData.preOrders.filter(preOrder => preOrder.recordId !== campaignId);
+                    localStorage.setItem('cachedDisplayData', JSON.stringify(cachedData));
+                }
+                
+                // Show clean success message
+                alert(`✅ Campaign Deleted Successfully!\n\n` +
+                      `"${campaign.albumTitle}" has been completely removed from the website.`);
+                
+                // Refresh all dashboard displays
+                loadInventoryData();
+                loadCampaignsData();
+                loadUsersData();
+                updateStatistics();
+                
+                console.log('Campaign completely deleted from all locations:', campaignId);
             }
         }
 

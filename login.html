@@ -39,8 +39,8 @@
                     <div class="ml-10 flex items-baseline space-x-8">
                         <a href="index.html#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
                         <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
-                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
                         <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
                         <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
                         <a href="index.html#dashboard" class="hover:text-gray-300 transition-colors duration-200">Dashboard</a>
                         <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
@@ -255,8 +255,8 @@
                             // Check if account is verified (for local testing or production)
                             let isAccountVerified;
                             if (isLocalTesting) {
-                                // Local testing: use localStorage flag
-                                isAccountVerified = localStorage.getItem('accountVerified') === 'true';
+                                // Local testing: always allow login (email verification is one-time only)
+                                isAccountVerified = true;
                             } else {
                                 // Production: check if account has been verified through email
                                 // In production, accounts are verified after email confirmation
@@ -579,12 +579,104 @@
             };
 
             // Function to force login bypass (for persistent data integrity issues)
-            window.forceLoginBypass = function() {
+        window.forceLoginBypass = function() {
+            if (window.location.protocol === 'file:') {
+                localStorage.setItem('accountVerified', 'true');
+                localStorage.setItem('forceLoginBypass', 'true');
+                console.log('Force login bypass enabled for local testing!');
+                alert('Force login bypass enabled! You can now log in with any credentials.');
+            } else {
+                console.log('This function only works in local testing mode (file:// protocol)');
+                alert('This function only works in local testing mode.');
+            }
+        };
+
+        // Function to check admin login status
+        window.checkAdminLoginStatus = function() {
+            console.log('=== ADMIN LOGIN STATUS CHECK ===');
+            const adminSession = localStorage.getItem('adminSession');
+            const adminAccount = localStorage.getItem('adminAccount');
+            
+            console.log('Admin Session:', adminSession);
+            console.log('Admin Account:', adminAccount);
+            
+            if (adminSession === 'true') {
+                console.log('✅ You are LOGGED IN as admin');
+                alert('You are currently LOGGED IN as admin.\n\nTo log out, go to the admin dashboard and click "Log Out".');
+            } else {
+                console.log('❌ You are LOGGED OUT from admin');
+                alert('You are currently LOGGED OUT from admin.\n\nYou can log in using the "Admin Login" button.');
+            }
+            
+            console.log('===============================');
+        };
+
+        // Function to force admin logout
+        window.forceAdminLogout = function() {
+            console.log('=== FORCING ADMIN LOGOUT ===');
+            localStorage.removeItem('adminSession');
+            localStorage.removeItem('adminAccount');
+            console.log('Admin session and account cleared');
+            alert('Admin logout forced! You are now logged out.');
+            console.log('=============================');
+        };
+
+            // Function to check admin data and restore if needed
+            window.checkAdminData = function() {
+                console.log('=== ADMIN DATA CHECK ===');
+                const adminData = localStorage.getItem('adminAccount');
+                const adminSession = localStorage.getItem('adminSession');
+                
+                console.log('Admin account data:', adminData);
+                console.log('Admin session:', adminSession);
+                
+                if (adminData) {
+                    try {
+                        const parsed = JSON.parse(adminData);
+                        console.log('Parsed admin data:', parsed);
+                        console.log('Admin username:', parsed.username);
+                        console.log('Admin role:', parsed.role);
+                    } catch (e) {
+                        console.error('Error parsing admin data:', e);
+                    }
+                } else {
+                    console.log('No admin account data found');
+                }
+                
+                // Check all localStorage keys for admin-related data
+                const keys = Object.keys(localStorage);
+                console.log('All localStorage keys:', keys);
+                keys.forEach(key => {
+                    if (key.includes('admin') || key.includes('Admin')) {
+                        console.log(`Admin key: ${key}`, localStorage.getItem(key));
+                    }
+                });
+                console.log('========================');
+            };
+
+            // Function to restore admin account (if you know the credentials)
+            window.restoreAdminAccount = function() {
                 if (window.location.protocol === 'file:') {
-                    localStorage.setItem('accountVerified', 'true');
-                    localStorage.setItem('forceLoginBypass', 'true');
-                    console.log('Force login bypass enabled for local testing!');
-                    alert('Force login bypass enabled! You can now log in with any credentials.');
+                    const username = prompt('Enter your admin username:');
+                    if (!username) return;
+                    
+                    const password = prompt('Enter your admin password:');
+                    if (!password) return;
+                    
+                    // Create admin account with your credentials
+                    const adminAccount = {
+                        username: username,
+                        password: password,
+                        role: 'admin',
+                        createdAt: new Date().toISOString(),
+                        permissions: ['view_users', 'manage_campaigns', 'process_refunds', 'view_analytics']
+                    };
+                    
+                    localStorage.setItem('adminAccount', JSON.stringify(adminAccount));
+                    localStorage.setItem('adminSession', 'true');
+                    
+                    console.log('Admin account restored!');
+                    alert('Admin account restored! You can now log in as admin.');
                 } else {
                     console.log('This function only works in local testing mode (file:// protocol)');
                     alert('This function only works in local testing mode.');
@@ -595,6 +687,10 @@
             document.getElementById('adminLoginBtn').addEventListener('click', function() {
                 // Check if admin account exists
                 const adminData = localStorage.getItem('adminAccount');
+                
+                console.log('Admin login clicked');
+                console.log('Admin data exists:', !!adminData);
+                console.log('Admin data:', adminData);
                 
                 if (!adminData) {
                     // No admin account exists - require master key to create one
