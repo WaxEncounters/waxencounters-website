@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wax Encounters - Stampa Vinili di Lusso</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Security Scripts -->
+    <script src="js/security.js"></script>
+    <script src="js/secure-storage.js"></script>
+    <script src="js/server-validation.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -201,11 +205,13 @@
                     <div class="ml-10 flex items-baseline space-x-8">
                         <a href="#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
                         <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
-                        <a href="album.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
                         <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
                         <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
-                        <a href="#dashboard" class="hover:text-gray-300 transition-colors duration-200">Dashboard</a>
                         <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
+                        <a href="login.html" id="loginNavLink" class="hover:text-gray-300 transition-colors duration-200">Log In</a>
+                        <a href="account.html" id="accountNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">My Account</a>
+                        <a href="#" id="logoutNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">Log Out</a>
                     </div>
                 </div>
                 <div class="md:hidden">
@@ -240,7 +246,7 @@
                     <a href="print.html" class="premium-button w-full sm:w-auto px-10 py-4 text-black font-semibold rounded-full text-lg inline-block text-center">
                         Print your vinyl
                     </a>
-                    <a href="album.html" class="w-full sm:w-auto px-10 py-4 glass-card rounded-full hover:bg-white hover:bg-opacity-10 transition-all duration-300 text-lg inline-block text-center">
+                    <a href="supportarecord.html" class="w-full sm:w-auto px-10 py-4 glass-card rounded-full hover:bg-white hover:bg-opacity-10 transition-all duration-300 text-lg inline-block text-center">
                         Support a record
                     </a>
                 </div>
@@ -385,18 +391,9 @@
                             This way, artists can bring their music to life without financial risk, and fans become an essential part of the journey.
                         </p>
                     </div>
-                    <div class="glass-card rounded-2xl p-8 shimmer-effect">
-                        <div class="aspect-square bg-gradient-to-br from-gray-700 via-gray-800 to-black rounded-xl relative overflow-hidden">
-                            <div class="absolute inset-0 luxury-gradient"></div>
-                            <div class="absolute inset-4 border-2 border-white border-opacity-20 rounded-lg"></div>
-                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full mb-4 mx-auto flex items-center justify-center">
-                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                </div>
-                                <p class="text-gray-300">Pre-order System</p>
-                            </div>
+                    <div class="shimmer-effect">
+                        <div class="aspect-square rounded-xl relative overflow-hidden">
+                            <img src="images/AlienoDisco.jpg" alt="Alieno Disco Vinyl" class="w-full h-full object-cover rounded-xl">
                          </div>
                     </div>
                 </div>
@@ -565,17 +562,8 @@
                     </div>
                     
                     <div class="glass-card rounded-2xl p-8 shimmer-effect">
-                        <div class="aspect-square bg-gradient-to-br from-gray-700 via-gray-800 to-black rounded-xl relative overflow-hidden">
-                            <div class="absolute inset-0 luxury-gradient"></div>
-                            <div class="absolute inset-4 border-2 border-white border-opacity-20 rounded-lg"></div>
-                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full mb-4 mx-auto flex items-center justify-center">
-                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z"/>
-                                    </svg>
-                                </div>
-                                <p class="text-gray-300">Design Example</p>
-                            </div>
+                        <div class="aspect-square rounded-xl relative bg-black">
+                            <img src="images/disco multicolor.jpg" alt="Multicolor Vinyl Design" class="w-full h-full object-contain rounded-xl">
                         </div>
                     </div>
                 </div>
@@ -840,6 +828,70 @@
                 window.location.href = mailto;
             });
         }
+
+        // Navigation state management
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigationState();
+        });
+
+        function updateNavigationState() {
+            const loginNavLink = document.getElementById('loginNavLink');
+            const accountNavLink = document.getElementById('accountNavLink');
+            const logoutNavLink = document.getElementById('logoutNavLink');
+            
+            if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
+                // User is logged in
+                if (loginNavLink) loginNavLink.classList.add('hidden');
+                if (accountNavLink) accountNavLink.classList.remove('hidden');
+                if (logoutNavLink) logoutNavLink.classList.remove('hidden');
+            } else {
+                // User is not logged in
+                if (loginNavLink) loginNavLink.classList.remove('hidden');
+                if (accountNavLink) accountNavLink.classList.add('hidden');
+                if (logoutNavLink) logoutNavLink.classList.add('hidden');
+            }
+        }
+
+        // Logout functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.getElementById('logoutNavLink');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Confirm logout
+                    if (confirm('Are you sure you want to log out?')) {
+                        // Clear session data
+                        if (window.SecureStorageManager) {
+                            window.SecureStorageManager.clearSession();
+                        }
+                        
+                        // Clear any other stored data (but preserve account verification for local testing)
+                        localStorage.removeItem('userData');
+                        localStorage.removeItem('sessionId');
+                        localStorage.removeItem('verificationToken');
+                        localStorage.removeItem('pendingVerificationEmail');
+                        
+                        // Preserve account verification status (both local and production)
+                        // Users shouldn't need to re-verify after every logout
+                        console.log('Preserving account verification status for better UX');
+                        // Don't remove accountVerified and verifiedEmail
+                        
+                        // Log security event
+                        if (window.ServerValidation) {
+                            window.ServerValidation.logSecurityEvent('user_logout', {
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                        
+                        // Redirect to homepage
+                        alert('You have been logged out successfully.');
+                        window.location.href = 'index.html';
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html> 

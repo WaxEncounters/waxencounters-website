@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact - Wax Encounters</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Security Scripts -->
+    <script src="js/security.js"></script>
+    <script src="js/secure-storage.js"></script>
+    <script src="js/server-validation.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,12 +20,13 @@
         .premium-button { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
         .premium-button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2); }
         .main-background { position: fixed; top: 0; left: 0; right: 0; height: 200vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/background image.jpeg'); background-size: cover; background-position: center top; background-repeat: no-repeat; z-index: -1; }
+        .contact-background { position: fixed; top: 0; left: 0; right: 0; height: 200vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/background image.jpeg'); background-size: 100% auto; background-position: center bottom; background-attachment: fixed; background-repeat: no-repeat; z-index: -1; }
     </style>
     <link rel="icon" href="data:,">
     <meta name="description" content="Get in touch with Wax Encounters. Email: waxencounters@gmail.com">
 </head>
 <body class="text-white overflow-x-hidden">
-    <div class="main-background"></div>
+    <div class="contact-background"></div>
     <nav class="fixed top-0 w-full z-50 glass-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -34,11 +39,13 @@
                     <div class="ml-10 flex items-baseline space-x-8">
                         <a href="index.html#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
                         <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
-                        <a href="album.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
                         <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
                         <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
-                        <a href="index.html#dashboard" class="hover:text-gray-300 transition-colors duration-200">Dashboard</a>
                         <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
+                        <a href="login.html" id="loginNavLink" class="hover:text-gray-300 transition-colors duration-200">Log In</a>
+                        <a href="account.html" id="accountNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">My Account</a>
+                        <a href="#" id="logoutNavLink" class="hover:text-gray-300 transition-colors duration-200 hidden">Log Out</a>
                     </div>
                 </div>
             </div>
@@ -58,6 +65,71 @@
         </section>
     </main>
 
+    <script>
+        // Navigation state management
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigationState();
+        });
+
+        function updateNavigationState() {
+            const loginNavLink = document.getElementById('loginNavLink');
+            const accountNavLink = document.getElementById('accountNavLink');
+            const logoutNavLink = document.getElementById('logoutNavLink');
+            
+            if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
+                // User is logged in
+                if (loginNavLink) loginNavLink.classList.add('hidden');
+                if (accountNavLink) accountNavLink.classList.remove('hidden');
+                if (logoutNavLink) logoutNavLink.classList.remove('hidden');
+            } else {
+                // User is not logged in
+                if (loginNavLink) loginNavLink.classList.remove('hidden');
+                if (accountNavLink) accountNavLink.classList.add('hidden');
+                if (logoutNavLink) logoutNavLink.classList.add('hidden');
+            }
+        }
+
+        // Logout functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.getElementById('logoutNavLink');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Confirm logout
+                    if (confirm('Are you sure you want to log out?')) {
+                        // Clear session data
+                        if (window.SecureStorageManager) {
+                            window.SecureStorageManager.clearSession();
+                        }
+                        
+                        // Clear any other stored data (but preserve account verification for local testing)
+                        localStorage.removeItem('userData');
+                        localStorage.removeItem('sessionId');
+                        localStorage.removeItem('verificationToken');
+                        localStorage.removeItem('pendingVerificationEmail');
+                        
+                        // Preserve account verification status (both local and production)
+                        // Users shouldn't need to re-verify after every logout
+                        console.log('Preserving account verification status for better UX');
+                        // Don't remove accountVerified and verifiedEmail
+                        
+                        // Log security event
+                        if (window.ServerValidation) {
+                            window.ServerValidation.logSecurityEvent('user_logout', {
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                        
+                        // Redirect to homepage
+                        alert('You have been logged out successfully.');
+                        window.location.href = 'index.html';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

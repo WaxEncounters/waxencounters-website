@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Complete Your Order - Wax Encounters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+        .glass-nav { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .premium-button { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .premium-button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2); }
+        .text-overlay { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 2rem; border: 1px solid rgba(199, 122, 180, 0.2); }
+        .main-background { position: fixed; top: 0; left: 0; right: 0; height: 200vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/background image.jpeg'); background-size: cover; background-position: center top; background-repeat: no-repeat; z-index: -1; }
+        .section-fade { opacity: 0; transform: translateY(40px); transition: opacity 1.2s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .section-fade.visible { opacity: 1; transform: translateY(0); }
+        .payment-method { border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer; }
+        .payment-method:hover { border-color: rgba(199, 122, 180, 0.5); }
+        .payment-method.selected { border-color: #c77ab4; background: rgba(199, 122, 180, 0.1); }
+    </style>
+    <link rel="icon" href="data:,">
+    <script src="js/purchase-tracker.js"></script>
+</head>
+<body class="text-white overflow-x-hidden">
+    <div class="main-background"></div>
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-xl font-bold tracking-wider">WAX ENCOUNTERS</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
+                        <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
+                        <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                        <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
+                        <a href="account.html" class="hover:text-gray-300 transition-colors duration-200">My Account</a>
+                        <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="min-h-screen pt-24">
+        <section class="relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <div class="text-overlay inline-block">
+                        <h1 id="mainHeading" class="text-4xl sm:text-5xl font-extrabold mb-2 tracking-tight">Complete Your Order</h1>
+                        <p id="mainDescription" class="text-lg text-gray-300">Complete your vinyl record purchase.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Order Summary -->
+                    <div class="glass-card rounded-2xl p-8">
+                        <h3 class="text-2xl font-bold mb-6">Order Summary</h3>
+                        
+                        <!-- Product Info -->
+                        <div class="flex items-center space-x-4 mb-6 p-4 bg-white bg-opacity-5 rounded-xl">
+                            <div class="w-20 h-20 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg flex items-center justify-center">
+                                <svg class="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-lg">Ethereal Dreams</h4>
+                                <p class="text-gray-400">by Luna Nova</p>
+                                <p class="text-sm text-gray-500">Vinyl Record Pre-order</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xl font-bold">€35</p>
+                            </div>
+                        </div>
+
+                        <!-- Campaign Progress (for pre-orders only) -->
+                        <div id="campaignProgress" class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium">Campaign Progress</span>
+                                <span class="text-sm text-gray-400">78 / 100</span>
+                            </div>
+                            <div class="w-full bg-white bg-opacity-10 rounded-full h-3 overflow-hidden">
+                                <div class="bg-gradient-to-r from-pink-400 to-purple-400 h-3 rounded-full" style="width: 78%;"></div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2">22 days remaining to reach funding goal</p>
+                        </div>
+
+                        <!-- Order Details -->
+                        <div class="space-y-3 mb-6">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Vinyl Record</span>
+                                <span>€35.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Shipping</span>
+                                <span>€5.00</span>
+                            </div>
+                            <div class="border-t border-white border-opacity-20 pt-3">
+                                <div class="flex justify-between text-lg font-semibold">
+                                    <span>Total</span>
+                                    <span>€40.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Important Notice -->
+                        <div id="importantNotice" class="bg-yellow-400 bg-opacity-10 border border-yellow-400 border-opacity-30 rounded-lg p-4">
+                            <p class="text-sm text-yellow-300">
+                                <strong>Important:</strong> This is a pre-order. If the campaign doesn't reach its funding goal, you'll receive a full refund automatically.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Form -->
+                    <div class="glass-card rounded-2xl p-8">
+                        <h3 class="text-2xl font-bold mb-6">Payment Information</h3>
+                        
+                        <form id="paymentForm" class="space-y-6">
+                            <!-- Payment Method Selection -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-3">Payment Method</label>
+                                <div class="space-y-3">
+                                    <div class="payment-method bg-white bg-opacity-5 rounded-xl p-4" data-method="card">
+                                        <div class="flex items-center space-x-3">
+                                            <input type="radio" name="paymentMethod" value="card" class="text-pink-400 focus:ring-pink-400" checked>
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
+                                            </svg>
+                                            <span>Credit/Debit Card</span>
+                                        </div>
+                                    </div>
+                                    <div class="payment-method bg-white bg-opacity-5 rounded-xl p-4" data-method="paypal">
+                                        <div class="flex items-center space-x-3">
+                                            <input type="radio" name="paymentMethod" value="paypal" class="text-pink-400 focus:ring-pink-400">
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            <span>PayPal</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Personal Information -->
+                            <div class="border-t border-white border-opacity-20 pt-6">
+                                <h4 class="text-lg font-semibold mb-4">Personal Information</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">First Name *</label>
+                                        <input type="text" name="firstName" required placeholder="John" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Last Name *</label>
+                                        <input type="text" name="lastName" required placeholder="Doe" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card Details (shown by default) -->
+                            <div id="cardDetails" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Card Number</label>
+                                    <input type="text" placeholder="1234 5678 9012 3456" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Expiry Date</label>
+                                        <input type="text" placeholder="MM/YY" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">CVV</label>
+                                        <input type="text" placeholder="123" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Cardholder Name</label>
+                                    <input type="text" placeholder="John Doe" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                </div>
+                            </div>
+
+                            <!-- Billing Address -->
+                            <div class="border-t border-white border-opacity-20 pt-6">
+                                <h4 class="text-lg font-semibold mb-4">Billing Address</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Address</label>
+                                        <input type="text" placeholder="123 Main Street" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-300 mb-2">City</label>
+                                            <input type="text" placeholder="New York" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-300 mb-2">Postal Code</label>
+                                            <input type="text" placeholder="10001" class="w-full px-4 py-3 bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-base">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Terms Agreement -->
+                            <div class="flex items-start space-x-3">
+                                <input id="paymentTerms" type="checkbox" required class="h-5 w-5 rounded border-white border-opacity-20 bg-white bg-opacity-10 text-pink-400 focus:ring-pink-400 mt-1">
+                                <label for="paymentTerms" id="termsLabel" class="text-sm text-gray-300 leading-relaxed">
+                                    I agree to the <a href="#" class="text-pink-400 hover:text-pink-300">Terms of Service</a> and understand that this is a pre-order. If the campaign doesn't reach its funding goal, I will receive a full refund.
+                                </label>
+                            </div>
+
+                            <!-- Complete Order Button -->
+                            <button id="submitButton" type="submit" class="premium-button w-full px-8 py-4 text-black font-semibold rounded-xl text-lg hover:scale-105 transition-transform duration-200">
+                                Complete Order - €40.00
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Check referrer and update page content accordingly
+        document.addEventListener('DOMContentLoaded', function() {
+            const referrer = document.referrer;
+            console.log('Payment page referrer:', referrer);
+            
+            // Check if user came from collection page (direct purchase)
+            const isFromCollection = referrer.includes('collection.html') || 
+                                   referrer.includes('collection') ||
+                                   window.location.search.includes('type=direct');
+            
+            console.log('Is from collection:', isFromCollection);
+            
+            if (isFromCollection) {
+                // User came from collection page - direct purchase
+                console.log('Updating page for direct purchase');
+                updatePageForDirectPurchase();
+            } else {
+                // User came from support a record page - pre-order
+                console.log('Updating page for pre-order');
+                updatePageForPreOrder();
+            }
+        });
+
+        function updatePageForDirectPurchase() {
+            // Update page title
+            document.getElementById('pageTitle').textContent = 'Buy Your Record - Wax Encounters';
+            
+            // Update main heading
+            document.getElementById('mainHeading').textContent = 'Buy Your Record';
+            
+            // Update description
+            document.getElementById('mainDescription').textContent = 'Complete your vinyl record purchase.';
+            
+            // Hide campaign progress section
+            document.getElementById('campaignProgress').style.display = 'none';
+            
+            // Update important notice
+            const notice = document.getElementById('importantNotice');
+            notice.className = 'bg-green-400 bg-opacity-10 border border-green-400 border-opacity-30 rounded-lg p-4';
+            notice.innerHTML = '<p class="text-sm text-green-300"><strong>Ready to Ship:</strong> This record is already pressed and ready for immediate shipping.</p>';
+            
+            // Update submit button
+            document.getElementById('submitButton').textContent = 'Buy Record - €40.00';
+            
+            // Update terms text
+            document.getElementById('termsLabel').innerHTML = 'I agree to the <a href="#" class="text-pink-400 hover:text-pink-300">Terms of Service</a> and understand that this is a direct purchase.';
+        }
+
+        function updatePageForPreOrder() {
+            // Keep all pre-order content as is
+            // This is the default state
+        }
+
+        // Intersection Observer for section animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all animated elements
+        document.querySelectorAll('.section-fade').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', function() {
+                // Remove selected class from all methods
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                // Add selected class to clicked method
+                this.classList.add('selected');
+                // Check the radio button
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        // Payment form submission
+        const paymentForm = document.getElementById('paymentForm');
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(paymentForm);
+                const firstName = formData.get('firstName');
+                const lastName = formData.get('lastName');
+                const termsAccepted = document.getElementById('paymentTerms').checked;
+                
+                // Validate required fields
+                if (!firstName || !lastName) {
+                    alert('Please fill in your first name and last name');
+                    return;
+                }
+                
+                if (!termsAccepted) {
+                    alert('Please accept the terms and conditions to complete your order');
+                    return;
+                }
+                
+                // Process payment with purchase tracker
+                processPayment(firstName, lastName, formData);
+            });
+        }
+
+        // Process payment and update inventory/campaigns
+        function processPayment(firstName, lastName, formData) {
+            try {
+                // Get order details from URL or form
+                const referrer = document.referrer;
+                const isFromCollection = referrer.includes('collection.html') || 
+                                       referrer.includes('collection') ||
+                                       window.location.search.includes('type=direct');
+                
+                // For demo purposes, we'll use a sample record ID
+                // In production, this would come from the actual product selection
+                const recordId = isFromCollection ? 'sample_immediate_record' : 'sample_crowdfunding_record';
+                const price = parseFloat(document.querySelector('.text-3xl').textContent.replace('€', ''));
+                
+                // Create sample records if they don't exist (for demo)
+                createSampleRecordsIfNeeded();
+                
+                let success = false;
+                let message = '';
+                
+                if (isFromCollection) {
+                    // Process immediate sale
+                    success = window.PurchaseTracker.processImmediatePurchase(recordId, 1);
+                    message = success ? 
+                        `Purchase successful! Your record will be shipped to ${firstName} ${lastName}.` :
+                        'Purchase failed. Please try again.';
+                } else {
+                    // Process crowdfunding pre-order
+                    success = window.PurchaseTracker.processCrowdfundingPurchase(recordId, price);
+                    message = success ? 
+                        `Pre-order successful! Thank you ${firstName} ${lastName} for supporting this campaign.` :
+                        'Pre-order failed. Please try again.';
+                }
+                
+                if (success) {
+                    // Store order details
+                    const orderDetails = {
+                        id: 'order_' + Date.now(),
+                        customerName: `${firstName} ${lastName}`,
+                        recordId: recordId,
+                        amount: price,
+                        type: isFromCollection ? 'immediate' : 'crowdfunding',
+                        timestamp: new Date().toISOString(),
+                        status: 'completed'
+                    };
+                    
+                    // Save order to localStorage (in production, this would go to a database)
+                    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                    existingOrders.push(orderDetails);
+                    localStorage.setItem('orders', JSON.stringify(existingOrders));
+                    
+                    alert(message);
+                    
+                    // Redirect to success page or account
+                    setTimeout(() => {
+                        window.location.href = 'account.html';
+                    }, 2000);
+                } else {
+                    alert(message);
+                }
+                
+            } catch (error) {
+                console.error('Payment processing error:', error);
+                alert('An error occurred during payment processing. Please try again.');
+            }
+        }
+
+        // Create sample records for demo purposes
+        function createSampleRecordsIfNeeded() {
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            
+            // Create sample immediate sale record if it doesn't exist
+            if (!records.find(r => r.id === 'sample_immediate_record')) {
+                records.push({
+                    id: 'sample_immediate_record',
+                    type: 'immediate',
+                    artistName: 'Demo Artist',
+                    albumTitle: 'Sample Album',
+                    genre: 'Electronic',
+                    description: 'A sample album for immediate purchase',
+                    price: 35.00,
+                    quantity: 50,
+                    sold: 0,
+                    status: 'available',
+                    uploadedAt: new Date().toISOString()
+                });
+            }
+            
+            // Create sample crowdfunding record if it doesn't exist
+            if (!records.find(r => r.id === 'sample_crowdfunding_record')) {
+                records.push({
+                    id: 'sample_crowdfunding_record',
+                    type: 'crowdfunding',
+                    artistName: 'Crowdfunding Artist',
+                    albumTitle: 'Crowdfunding Album',
+                    genre: 'Ambient',
+                    description: 'A sample album for crowdfunding',
+                    price: 35.00,
+                    fundingGoal: 3500.00,
+                    campaignDays: 30,
+                    startDate: new Date().toISOString().split('T')[0],
+                    raised: 0,
+                    backers: 0,
+                    status: 'campaign',
+                    uploadedAt: new Date().toISOString()
+                });
+            }
+            
+            localStorage.setItem('uploadedRecords', JSON.stringify(records));
+        }
+    </script>
+</body>
+</html>

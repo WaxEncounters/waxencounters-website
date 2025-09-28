@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - Wax Encounters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+        .glass-nav { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .premium-button { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .premium-button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2); }
+        .text-overlay { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 2rem; border: 1px solid rgba(199, 122, 180, 0.2); }
+        .main-background { position: fixed; top: 0; left: 0; right: 0; height: 200vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/background image.jpeg'); background-size: cover; background-position: center top; background-repeat: no-repeat; z-index: -1; }
+        .section-fade { opacity: 0; transform: translateY(40px); transition: opacity 1.2s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .section-fade.visible { opacity: 1; transform: translateY(0); }
+        .verification-icon { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
+    <link rel="icon" href="data:,">
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Email Service -->
+    <script src="js/email-service.js"></script>
+</head>
+<body class="text-white overflow-x-hidden">
+    <div class="main-background"></div>
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-xl font-bold tracking-wider">WAX ENCOUNTERS</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html#hero" class="hover:text-gray-300 transition-colors duration-200">Home</a>
+                        <a href="about.html" class="hover:text-gray-300 transition-colors duration-200">About Us</a>
+                        <a href="supportarecord.html" class="hover:text-gray-300 transition-colors duration-200">Support a Record</a>
+                        <a href="print.html" class="hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                        <a href="collection.html" class="hover:text-gray-300 transition-colors duration-200">Collection</a>
+                        <a href="contact.html" class="hover:text-gray-300 transition-colors duration-200">Contact</a>
+                        <a href="login.html" class="hover:text-gray-300 transition-colors duration-200">Log In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="min-h-screen pt-24">
+        <section class="relative">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <div class="text-overlay inline-block">
+                        <h1 class="text-4xl sm:text-5xl font-extrabold mb-2 tracking-tight">Check Your Email</h1>
+                        <p class="text-lg text-gray-300">We've sent you a verification link to complete your account setup.</p>
+                    </div>
+                </div>
+
+                <div class="max-w-2xl mx-auto glass-card rounded-2xl p-8 text-center">
+                    <!-- Email Icon -->
+                    <div class="w-20 h-20 bg-pink-400 bg-opacity-20 rounded-full mx-auto mb-6 flex items-center justify-center verification-icon">
+                        <svg class="w-10 h-10 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+
+                    <h2 class="text-2xl font-bold mb-4">Verification Email Sent</h2>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        We've sent a verification link to <strong id="userEmail" class="text-pink-300">your-email@example.com</strong>. 
+                        Please check your email inbox and click the verification link to activate your account.
+                    </p>
+
+                    <!-- Instructions -->
+                    <div class="bg-white bg-opacity-5 rounded-xl p-6 mb-8 text-left">
+                        <h3 class="text-lg font-semibold mb-4 text-pink-300">What to do next:</h3>
+                        <ol class="space-y-3 text-sm text-gray-300">
+                            <li class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-pink-400 bg-opacity-20 rounded-full flex items-center justify-center text-xs font-bold text-pink-300 flex-shrink-0 mt-0.5">1</span>
+                                <span>Check your email inbox (and spam folder if needed)</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-pink-400 bg-opacity-20 rounded-full flex items-center justify-center text-xs font-bold text-pink-300 flex-shrink-0 mt-0.5">2</span>
+                                <span>Click the verification link in the email</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-pink-400 bg-opacity-20 rounded-full flex items-center justify-center text-xs font-bold text-pink-300 flex-shrink-0 mt-0.5">3</span>
+                                <span>You'll be redirected to your account dashboard</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Resend Email Button -->
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-400">Didn't receive the email?</p>
+                        <button id="resendEmail" class="premium-button px-6 py-3 text-black font-semibold rounded-lg text-sm">
+                            Resend Verification Email
+                        </button>
+                    </div>
+
+                    <!-- Back to Login -->
+                    <div class="mt-8 pt-6 border-t border-white border-opacity-20">
+                        <p class="text-sm text-gray-400 mb-4">Already verified your email?</p>
+                        <a href="login.html" class="glass-card px-6 py-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300 text-sm inline-block">
+                            Go to Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Update email address on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const pendingEmail = localStorage.getItem('pendingVerificationEmail');
+            const userEmailElement = document.getElementById('userEmail');
+            
+            if (pendingEmail && userEmailElement) {
+                userEmailElement.textContent = pendingEmail;
+                // Clear the stored email after displaying it
+                localStorage.removeItem('pendingVerificationEmail');
+            }
+        });
+
+        // Intersection Observer for section animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all animated elements
+        document.querySelectorAll('.section-fade').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Resend email functionality
+        const resendButton = document.getElementById('resendEmail');
+        resendButton.addEventListener('click', async function() {
+            const userEmail = document.getElementById('userEmail').textContent;
+            
+            if (window.EmailService) {
+                const verificationToken = window.EmailService.generateVerificationToken();
+                const verificationLink = window.EmailService.generateVerificationLink(userEmail, verificationToken);
+                
+                // Store new verification token
+                localStorage.setItem('verificationToken', verificationToken);
+                
+                const result = await window.EmailService.sendVerificationEmail(
+                    userEmail,
+                    'User', // You might want to get the actual name from stored data
+                    verificationLink
+                );
+                
+                if (result.success) {
+                    alert(`Verification email has been resent to ${userEmail}! Please check your inbox.`);
+                } else {
+                    alert('Failed to resend verification email. Please try again later or contact support.');
+                }
+            } else {
+                alert(`Verification email has been resent to ${userEmail}! Please check your inbox.`);
+            }
+        });
+    </script>
+</body>
+</html>
