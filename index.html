@@ -216,12 +216,27 @@
                     </div>
                 </div>
                 <div class="md:hidden">
-                    <button class="text-gray-300 hover:text-white">
+                    <button type="button" id="mobile-menu-button" class="text-gray-300 hover:text-white focus:outline-none focus:text-white">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu panel -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black bg-opacity-90 backdrop-filter backdrop-blur-lg border-t border-white border-opacity-10">
+                <a href="#hero" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Home</a>
+                <a href="about.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">About Us</a>
+                <a href="print.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Print Your Vinyl</a>
+                <a href="supportarecord.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Support a Record</a>
+                <a href="collection.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Collection</a>
+                <a href="contact.html" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Contact</a>
+                <a href="login.html" id="mobileLoginNavLink" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200">Log In</a>
+                <a href="account.html" id="mobileAccountNavLink" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200 hidden">My Account</a>
+                <a href="#" id="mobileLogoutNavLink" class="block px-3 py-2 text-base font-medium hover:text-gray-300 transition-colors duration-200 hidden" onclick="logout()">Log Out</a>
             </div>
         </div>
     </nav>
@@ -1168,16 +1183,41 @@
             const accountNavLink = document.getElementById('accountNavLink');
             const logoutNavLink = document.getElementById('logoutNavLink');
             
+            // Mobile menu links
+            const mobileLoginNavLink = document.getElementById('mobileLoginNavLink');
+            const mobileAccountNavLink = document.getElementById('mobileAccountNavLink');
+            const mobileLogoutNavLink = document.getElementById('mobileLogoutNavLink');
+            
             if (window.SecureStorageManager && window.SecureStorageManager.isSessionValid()) {
                 // User is logged in
                 if (loginNavLink) loginNavLink.classList.add('hidden');
                 if (accountNavLink) accountNavLink.classList.remove('hidden');
                 if (logoutNavLink) logoutNavLink.classList.remove('hidden');
+                
+                // Mobile menu
+                if (mobileLoginNavLink) mobileLoginNavLink.classList.add('hidden');
+                if (mobileAccountNavLink) mobileAccountNavLink.classList.remove('hidden');
+                if (mobileLogoutNavLink) mobileLogoutNavLink.classList.remove('hidden');
             } else {
                 // User is not logged in
                 if (loginNavLink) loginNavLink.classList.remove('hidden');
                 if (accountNavLink) accountNavLink.classList.add('hidden');
                 if (logoutNavLink) logoutNavLink.classList.add('hidden');
+                
+                // Mobile menu
+                if (mobileLoginNavLink) mobileLoginNavLink.classList.remove('hidden');
+                if (mobileAccountNavLink) mobileAccountNavLink.classList.add('hidden');
+                if (mobileLogoutNavLink) mobileLogoutNavLink.classList.add('hidden');
+            }
+            
+            // Handle mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
             }
         }
 
