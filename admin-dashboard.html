@@ -41,7 +41,7 @@
                     <div class="ml-10 flex items-baseline space-x-8">
                         <span class="text-pink-400 font-semibold">Admin Dashboard</span>
                         <a href="admin-upload.html" class="hover:text-gray-300 transition-colors duration-200">📀 Upload a Record</a>
-                        <button id="logoutAdminBtn" class="hover:text-gray-300 transition-colors duration-200">Log Out</button>
+                        <button id="logoutAdminBtn" onclick="event.stopPropagation(); return handleLogoutClick();" class="hover:text-gray-300 transition-colors duration-200">Log Out</button>
                     </div>
                 </div>
             </div>
@@ -56,8 +56,14 @@
                         <h1 class="text-4xl sm:text-5xl font-extrabold mb-2 tracking-tight">Admin Dashboard</h1>
                         <p class="text-lg text-gray-300">Monitor users, campaigns, and manage operations.</p>
                         <div class="mt-4">
-                            <button id="adminAuthBtn" class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors font-semibold">
+                            <button id="adminAuthBtn" onclick="(function(){try{var k=prompt('Enter admin master key to access encrypted user data:');if(!k)return false; if(k==='WAX_ADMIN_MASTER_2024'){localStorage.setItem('adminAuthOK','1'); alert('✅ Admin authenticated!'); try{if(window.loadUsersData) loadUsersData();}catch(_){} } else { alert('❌ Invalid admin key.'); }}catch(e){alert('Admin auth failed.');}})(); return false;" class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors font-semibold">
                                 🔐 Authenticate for Full Data Access
+                            </button>
+                            <button id="vacationModeBtn" onclick="(function(){try{var current=null;try{current=JSON.parse(localStorage.getItem('vacationMode')||'null');}catch(_){} if(current&&current.active){ if(confirm('Vacation mode is active until '+ new Date(current.until).toLocaleString() +'\n\nDo you want to turn it OFF now?')){ localStorage.setItem('vacationMode', JSON.stringify({active:false, until:null})); alert('Vacation mode disabled. The site is now live.'); } return false; } var val=prompt('Enter return date and time (YYYY-MM-DDTHH:mm)'); if(!val) return false; var d=new Date(val); if(isNaN(d.getTime())){ alert('Invalid date/time.'); return false; } localStorage.setItem('vacationMode', JSON.stringify({active:true, until:d.toISOString()})); alert('Vacation mode enabled until '+ d.toLocaleString() +'. Users will see the vacation page.'); }catch(e){alert('Vacation toggle failed.');}})(); return false;" class="ml-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors font-semibold">
+                                🌴 Vacation Mode
+                            </button>
+                            <button id="vacationForceOffBtn" onclick="try{localStorage.setItem('vacationMode', JSON.stringify({active:false, until:null})); alert('Vacation mode disabled immediately.');}catch(e){alert('Failed disabling vacation mode.');} return false;" class="ml-2 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-semibold">
+                                ⛔ Disable Vacation Now
                             </button>
                         </div>
                     </div>
@@ -89,15 +95,24 @@
                             <div class="text-sm text-gray-400">Pending Refunds</div>
                         </div>
                     </div>
+                    <!-- Guest Orders Counter -->
+                    <div class="admin-card rounded-xl p-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-300 mb-2" id="guestOrdersCount">0</div>
+                            <div class="text-sm text-gray-400">Guest Orders</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Users Database -->
                 <div class="admin-card rounded-2xl p-8 mb-8">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-2xl font-bold">Users Database</h3>
-                        <button id="refreshUsersBtn" class="premium-button px-4 py-2 text-black font-semibold rounded-lg text-sm">
+                        <div class="flex gap-2">
+                            <button id="refreshUsersBtn" onclick="try{ if(window.loadDashboardData) { loadDashboardData(); alert('Dashboard data refreshed!'); } else { location.reload(); } }catch(e){ location.reload(); } return false;" class="premium-button px-4 py-2 text-black font-semibold rounded-lg text-sm">
                             Refresh Data
                         </button>
+                        </div>
                     </div>
                     
                     <div class="overflow-x-auto">
@@ -120,6 +135,33 @@
                     </div>
                 </div>
 
+                <!-- Guests Database (Only Guest Orders) -->
+                <div class="admin-card rounded-2xl p-8 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-bold">Guests Database</h3>
+                        <div class="text-sm text-gray-400">Only purchases made without an account</div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-white border-opacity-20">
+                                    <th class="text-left py-3 px-4 text-sm font-semibold">Guest ID</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold">Name</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold">Email</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold">Address</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold">Orders</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold">Status</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guestsTableBody">
+                                <!-- Guests will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Campaigns Overview -->
                 <div class="admin-card rounded-2xl p-8">
                     <h3 class="text-2xl font-bold mb-6">Campaign Progress</h3>
@@ -128,6 +170,7 @@
                         <!-- Campaigns will be populated here -->
                     </div>
                 </div>
+
 
                 <!-- Inventory Management -->
                 <div class="admin-card rounded-2xl p-8">
@@ -142,8 +185,69 @@
     </main>
 
     <script>
+        // Fallback global handlers so buttons work even if early JS fails
+        function handleLogoutClick() {
+            try {
+                if (confirm('Are you sure you want to log out of admin panel?')) {
+                    localStorage.removeItem('adminSession');
+                    const vm = JSON.parse(localStorage.getItem('vacationMode') || 'null');
+                    if (vm && vm.active) {
+                        window.location.replace('vacation.html?admin=1');
+                    } else {
+                        window.location.replace('login.html');
+                    }
+                }
+            } catch (e) { console.error(e); alert('Logout failed.'); }
+        }
+
+        async function handleAdminAuthClick() {
+            try {
+                const adminPassword = prompt('Enter admin master key to access encrypted user data:');
+                if (!adminPassword) return;
+                if (window.adminDataAccess && await adminDataAccess.authenticateAdmin(adminPassword)) {
+                    alert('✅ Admin authenticated! You can now access encrypted user data.');
+                    await loadUsersData();
+                } else {
+                    alert('❌ Invalid admin key. Access denied.');
+                }
+            } catch (e) { console.error(e); alert('Admin auth failed.'); }
+        }
+
+        function handleVacationClick() {
+            try {
+                const current = JSON.parse(localStorage.getItem('vacationMode') || 'null');
+                if (current && current.active) {
+                    if (confirm(`Vacation mode is active until ${new Date(current.until).toLocaleString()}\n\nDo you want to turn it OFF now?`)) {
+                        localStorage.setItem('vacationMode', JSON.stringify({ active: false, until: null }));
+                        alert('Vacation mode disabled. The site is now live.');
+                    }
+                    return;
+                }
+                if (typeof showVacationCalendarModal === 'function') {
+                    showVacationCalendarModal();
+                } else {
+                    alert('Calendar not ready. Please refresh and try again.');
+                }
+            } catch (e) { console.error(e); alert('Vacation toggle failed.'); }
+        }
+
+        function forceVacationOffClick() {
+            try {
+                localStorage.setItem('vacationMode', JSON.stringify({ active: false, until: null }));
+                alert('Vacation mode disabled immediately.');
+            } catch (e) { console.error(e); alert('Failed disabling vacation mode.'); }
+        }
+
+        function handleRefreshDataClick() {
+            try {
+                loadDashboardData();
+                alert('Dashboard data refreshed!');
+            } catch (e) { console.error(e); alert('Failed to refresh data.'); }
+        }
         // Check admin authentication
         document.addEventListener('DOMContentLoaded', function() {
+            // Safety: remove any stray full-screen overlays that could block clicks
+            try { document.querySelectorAll('.fixed.inset-0').forEach(el => el.remove()); } catch (e) { console.warn(e); }
             const adminSession = localStorage.getItem('adminSession');
             if (!adminSession) {
                 alert('Access denied. Admin authentication required.');
@@ -169,11 +273,93 @@
                     }
                 }
             });
+
+            // Vacation mode toggler (calendar style)
+            document.getElementById('vacationModeBtn').addEventListener('click', function() {
+                const current = JSON.parse(localStorage.getItem('vacationMode') || 'null');
+                if (current && current.active) {
+                    if (confirm(`Vacation mode is active until ${new Date(current.until).toLocaleString()}\n\nDo you want to turn it OFF now?`)) {
+                        localStorage.setItem('vacationMode', JSON.stringify({ active: false, until: null }));
+                        alert('Vacation mode disabled. The site is now live.');
+                    }
+                    return;
+                }
+                showVacationCalendarModal();
+            });
+
+            // Force disable vacation now (failsafe)
+            document.getElementById('vacationForceOffBtn').addEventListener('click', function() {
+                localStorage.setItem('vacationMode', JSON.stringify({ active: false, until: null }));
+                alert('Vacation mode disabled immediately.');
+            });
+
+            window.showVacationCalendarModal = function() {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+                backdrop.onclick = function(e){ if(e.target===backdrop) document.body.removeChild(backdrop); };
+
+                const container = document.createElement('div');
+                container.className = 'bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6 w-full max-w-md';
+                container.innerHTML = `
+                    <h2 class="text-xl font-bold mb-4">Enable Vacation Mode</h2>
+                    <label class="block text-sm text-gray-300 mb-2">Return date and time</label>
+                    <input id="vacationDatetime" type="datetime-local" class="w-full px-3 py-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 mb-4">
+                    <div class="flex justify-end gap-2">
+                        <button id="vacCancel" class="px-4 py-2 rounded-lg text-sm bg-gray-600 hover:bg-gray-500 text-white">Cancel</button>
+                        <button id="vacSave" class="px-4 py-2 rounded-lg text-sm bg-pink-500 hover:bg-pink-600 text-white font-semibold">Enable</button>
+                    </div>
+                `;
+                backdrop.appendChild(container);
+                document.body.appendChild(backdrop);
+
+                const cancelBtn = container.querySelector('#vacCancel');
+                const saveBtn = container.querySelector('#vacSave');
+                const dtInput = container.querySelector('#vacationDatetime');
+
+                // Prefill to tomorrow 09:00
+                const now = new Date();
+                const tomorrow = new Date(now.getTime() + 24*60*60*1000);
+                tomorrow.setMinutes(0); tomorrow.setSeconds(0); tomorrow.setMilliseconds(0);
+                const yyyy = tomorrow.getFullYear();
+                const mm = String(tomorrow.getMonth()+1).padStart(2,'0');
+                const dd = String(tomorrow.getDate()).padStart(2,'0');
+                const hh = '09';
+                const mi = '00';
+                dtInput.value = `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+
+                cancelBtn.onclick = () => document.body.removeChild(backdrop);
+                saveBtn.onclick = () => {
+                    const val = dtInput.value;
+                    if (!val) { alert('Please select a date and time.'); return; }
+                    const until = new Date(val);
+                    if (isNaN(until.getTime())) { alert('Invalid date/time.'); return; }
+                    localStorage.setItem('vacationMode', JSON.stringify({ active: true, until: until.toISOString() }));
+                    document.body.removeChild(backdrop);
+                    alert(`Vacation mode enabled until ${until.toLocaleString()}. Users will see the vacation page.`);
+                };
+            }
         });
+
+        // Global click delegation fallback to ensure buttons always respond
+        document.addEventListener('click', function(evt) {
+            const btn = evt.target.closest('#adminAuthBtn, #vacationModeBtn, #vacationForceOffBtn, #refreshUsersBtn');
+            if (!btn) return;
+            evt.preventDefault();
+            try {
+                if (btn.id === 'adminAuthBtn') return handleAdminAuthClick();
+                if (btn.id === 'vacationModeBtn') return handleVacationClick();
+                if (btn.id === 'vacationForceOffBtn') return forceVacationOffClick();
+                if (btn.id === 'refreshUsersBtn') return handleRefreshDataClick();
+            } catch (e) {
+                console.error('Admin button handler error:', e);
+                alert('Action failed. Please refresh and try again.');
+            }
+        }, true);
 
         // Load dashboard data
         function loadDashboardData() {
             loadUsersData();
+            loadGuestsData();
             loadCampaignsData();
             loadInventoryData();
             updateStatistics();
@@ -235,7 +421,7 @@
         }
         
         // Global admin data access instance
-        const adminDataAccess = new AdminDataAccess();
+        window.adminDataAccess = new AdminDataAccess();
         
         // Load users data
         async function loadUsersData() {
@@ -255,6 +441,29 @@
             console.log('User data found:', !!userData);
             console.log('Verified email:', verifiedEmails);
             console.log('Cached display data:', cachedDisplayData);
+            
+            // NEW: Merge orders into user summaries (ensures totals/pre-orders appear)
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const emailToOrderSummary = new Map();
+            orders.forEach(o => {
+                // Only map orders to users if they are not guest orders
+                if (!o.customerEmail || o.customerEmail === 'unknown' || !String(o.customerEmail).includes('@') || o.isGuest) return;
+                const email = o.customerEmail || (verifiedEmails || '').toString();
+                if (!email) return;
+                const current = emailToOrderSummary.get(email) || { totalSpent: 0, preOrders: [], shippedStates: [] };
+                current.totalSpent += Number(o.amount || 0);
+                current.preOrders.push({
+                    recordId: o.recordId,
+                    recordTitle: o.recordTitle,
+                    amount: o.amount,
+                    timestamp: o.timestamp,
+                    shipped: !!o.shipped,
+                    trackingNumber: o.trackingNumber || null,
+                    shipmentId: o.shipmentId || null
+                });
+                current.shippedStates.push(!!o.shipped);
+                emailToOrderSummary.set(email, current);
+            });
             
             // Find all admin user records (created during email verification)
             const allAdminUsers = [];
@@ -278,26 +487,25 @@
             // Add current user if they have cached data
             if (cachedDisplayData) {
                 try {
-                    const cached = JSON.parse(cachedDisplayData);
-                    console.log('Adding current user from cached data:', cached);
+                    console.log('Adding current user from cached data:', cachedDisplayData);
                     
-                    const userEmail = cached.email || verifiedEmails || 'N/A';
-                    const userName = cached.fullName || 'User Account';
-                    const accountCreated = cached.timestamp || Date.now();
+                    const userEmail = cachedDisplayData.email || verifiedEmails || 'N/A';
+                    const userName = cachedDisplayData.fullName || 'User Account';
+                    const accountCreated = cachedDisplayData.timestamp || Date.now();
                     
                     // Create a user object from cached data
                     const user = {
-                        firstName: cached.firstName || 'N/A',
-                        lastName: cached.lastName || 'N/A',
-                        email: cached.email,
-                        username: cached.username || cached.email?.split('@')[0],
-                        phone: cached.phone || 'Not provided',
-                        shippingAddress: cached.shippingAddress || 'Not provided',
-                        iban: cached.iban || 'Not provided',
-                        bic: cached.bic || 'Not provided',
-                        bankAccountOwner: cached.bankAccountOwner || 'Not provided',
-                        preOrders: cached.preOrders || [],
-                        totalSpent: cached.totalSpent || 0
+                        firstName: cachedDisplayData.firstName || 'N/A',
+                        lastName: cachedDisplayData.lastName || 'N/A',
+                        email: cachedDisplayData.email,
+                        username: cachedDisplayData.username || cachedDisplayData.email?.split('@')[0],
+                        phone: cachedDisplayData.phone || 'Not provided',
+                        shippingAddress: cachedDisplayData.shippingAddress || 'Not provided',
+                        iban: cachedDisplayData.iban || 'Not provided',
+                        bic: cachedDisplayData.bic || 'Not provided',
+                        bankAccountOwner: cachedDisplayData.bankAccountOwner || 'Not provided',
+                        preOrders: cachedDisplayData.preOrders || [],
+                        totalSpent: cachedDisplayData.totalSpent || 0
                     };
                     
                     addUserToTable(user, userName, userEmail, accountCreated, 'cached');
@@ -361,6 +569,74 @@
                 `;
                 usersTableBody.appendChild(row);
             }
+
+            // NEW: Apply order summaries to table (create or update rows)
+            emailToOrderSummary.forEach((summary, email) => {
+                // Skip guest/unknown emails here; they will appear in Guest Orders
+                if (!email || email === 'unknown' || !email.includes('@')) return;
+                const rowId = 'user-row-' + email.replace('@', '_at_');
+                const existingRow = document.getElementById(rowId);
+                const name = email.split('@')[0];
+                const user = { preOrders: summary.preOrders, totalSpent: Number(summary.totalSpent.toFixed(2)) };
+                if (existingRow) {
+                    const cells = existingRow.querySelectorAll('td');
+                    cells[3].textContent = user.preOrders.length;
+                    cells[4].textContent = '€' + user.totalSpent;
+                } else {
+                    addUserToTable(user, name, email, Date.now(), 'orders');
+                }
+            });
+        }
+
+        // Load guests data (from guest orders only)
+        function loadGuestsData() {
+            const guestsTableBody = document.getElementById('guestsTableBody');
+            if (!guestsTableBody) return;
+            guestsTableBody.innerHTML = '';
+
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            // Group guest orders by a stable guest key (contactEmail if present, else a composite key)
+            const guestMap = new Map();
+            orders.forEach(o => {
+                const isGuest = o.isGuest || !o.customerEmail || o.customerEmail === 'unknown' || !String(o.customerEmail).includes('@');
+                if (!isGuest) return;
+                const email = (o.contactEmail || '').trim();
+                const key = email || `guest_${(o.recipient?.firstName||'').toLowerCase()}_${(o.recipient?.lastName||'').toLowerCase()}_${(o.recipient?.postalCode||'').toLowerCase()}`;
+                const current = guestMap.get(key) || { name: `${o.recipient?.firstName||''} ${o.recipient?.lastName||''}`.trim() || 'Guest', email: email || 'N/A', address: '', orders: [], allShipped: true };
+                const addr = o.recipient ? `${o.recipient.address1||''} ${o.recipient.address2||''}, ${o.recipient.postalCode||''} ${o.recipient.city||''}, ${o.recipient.country||''}`.replace(/\s+,/g, ',').trim() : '';
+                current.address = current.address || addr;
+                current.orders.push(o);
+                current.allShipped = current.allShipped && !!o.shipped;
+                guestMap.set(key, current);
+            });
+
+            if (guestMap.size === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="7" class="py-8 px-4 text-center text-gray-400">No guest orders yet.</td>`;
+                guestsTableBody.appendChild(row);
+                return;
+            }
+
+            guestMap.forEach((g, key) => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-white border-opacity-10 hover:bg-white hover:bg-opacity-5';
+                const statusText = g.allShipped ? 'Shipping done' : `Waiting for shipping (${g.orders.filter(o=>!o.shipped).length})`;
+                const statusClass = g.allShipped ? 'status-funded' : 'status-pending';
+                const safeId = key.replace(/[^a-zA-Z0-9_\-]/g, '_');
+                row.id = 'guest-row-' + safeId;
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-sm">${safeId}</td>
+                    <td class="py-3 px-4 text-sm">${g.name}</td>
+                    <td class="py-3 px-4 text-sm">${g.email}</td>
+                    <td class="py-3 px-4 text-sm">${g.address || 'N/A'}</td>
+                    <td class="py-3 px-4 text-sm">${g.orders.length}</td>
+                    <td class="py-3 px-4"><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td class="py-3 px-4">
+                        <button onclick="viewGuestOrdersForKey('${safeId}')" class="text-blue-400 hover:text-blue-300 text-sm">View Orders</button>
+                    </td>
+                `;
+                guestsTableBody.appendChild(row);
+            });
         }
         
         // Helper function to add user to table
@@ -372,12 +648,19 @@
             
             const preOrders = user.preOrders ? user.preOrders.length : 0;
             const totalSpent = user.totalSpent || 0;
+            // NEW: Determine label status from orders
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const userOrders = orders.filter(o => o.customerEmail === userEmail);
+            const waitingCount = userOrders.filter(o => !o.labelGenerated).length;
+            const hasWaiting = waitingCount > 0;
             const createdDate = new Date(accountCreated).toLocaleDateString();
             
-            // Determine account status
+            // Determine account status (shipping-based)
             const isVerified = localStorage.getItem('accountVerified') === 'true' || dataSource === 'admin_record';
-            const statusText = isVerified ? 'Verified' : 'Pending';
-            const statusClass = isVerified ? 'status-funded' : 'status-pending';
+            const userOrdersAll = orders.filter(o => o.customerEmail === userEmail);
+            const anyUnshipped = userOrdersAll.some(o => !o.shipped);
+            const statusText = anyUnshipped ? `Waiting for shipping (${userOrdersAll.filter(o=>!o.shipped).length})` : 'Shipping done';
+            const statusClass = anyUnshipped ? 'status-pending' : 'status-funded';
             
             row.innerHTML = `
                 <td class="py-3 px-4 text-sm">${userEmail.split('@')[0]}</td>
@@ -390,6 +673,7 @@
                 </td>
                 <td class="py-3 px-4">
                     <button onclick="viewUserDetails('${userEmail}')" class="text-pink-400 hover:text-pink-300 text-sm">View Details</button>
+                    <button onclick="viewUserOrders('${userEmail}')" class="text-blue-400 hover:text-blue-300 text-sm ml-2">View Orders</button>
                 </td>
             `;
             
@@ -423,9 +707,11 @@
 
             // Get uploaded records from localStorage
             const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            console.log('All uploaded records:', records);
             
             // Filter crowdfunding campaigns
             const campaigns = records.filter(record => record.type === 'crowdfunding');
+            console.log('Crowdfunding campaigns found:', campaigns);
             
             // Add sample campaigns if no real ones exist (for demo purposes)
             if (campaigns.length === 0) {
@@ -529,9 +815,15 @@
 
             // Get uploaded records from localStorage
             const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            console.log('All uploaded records for inventory:', records);
             
-            // Filter immediate sale records
-            const inventoryItems = records.filter(record => record.type === 'immediate');
+            // Filter immediate sale records (match collection page logic exactly)
+            const inventoryItems = records.filter(record => 
+                record.type === 'immediate' && 
+                record.status === 'available' && 
+                (Number(record.quantity) || 0) > 0
+            );
+            console.log('Immediate sale records found (admin inventory):', inventoryItems);
             
             if (inventoryItems.length === 0) {
                 inventoryList.innerHTML = `
@@ -618,10 +910,35 @@
 
         // Update statistics
         function updateStatistics() {
-            // Update total users
-            const adminUsers = Object.keys(localStorage).filter(key => key.startsWith('admin_user_'));
-            const totalUsers = adminUsers.length;
-            document.getElementById('totalUsers').textContent = totalUsers;
+            // Update total users (unique registered users only; exclude guests)
+            const adminUserKeys = Object.keys(localStorage).filter(key => key.startsWith('admin_user_'));
+            const adminUserEmails = new Set();
+            adminUserKeys.forEach(key => {
+                try { const rec = JSON.parse(localStorage.getItem(key) || '{}'); if (rec && rec.email) adminUserEmails.add(rec.email); } catch (_) {}
+            });
+
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const registeredEmails = new Set();
+            orders.forEach(o => {
+                const email = (o.customerEmail || '').trim();
+                const isGuest = o.isGuest || !email || !email.includes('@');
+                if (!isGuest) registeredEmails.add(email);
+            });
+
+            // Include any verified account email stored locally
+            const verifiedEmail = (localStorage.getItem('verifiedEmail') || '').trim();
+            if (verifiedEmail && verifiedEmail.includes('@')) registeredEmails.add(verifiedEmail);
+
+            // Include cached display data email (registered user with no orders yet)
+            try {
+                const cached = JSON.parse(localStorage.getItem('cachedDisplayData') || 'null');
+                const cachedEmail = (cached && cached.email ? String(cached.email).trim() : '');
+                if (cachedEmail && cachedEmail.includes('@')) registeredEmails.add(cachedEmail);
+            } catch (_) {}
+
+            // Union of registered emails and admin-account emails
+            const uniqueUsersCount = new Set([...registeredEmails, ...adminUserEmails]).size;
+            document.getElementById('totalUsers').textContent = uniqueUsersCount;
 
             // Update active campaigns
             const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
@@ -641,6 +958,10 @@
 
             // Update pending refunds (for demo purposes)
             document.getElementById('pendingRefunds').textContent = '0';
+
+            // Update guest orders count (only truly guest/unknown emails or flagged isGuest)
+            const guestOrders = orders.filter(o => o.isGuest || !o.customerEmail || o.customerEmail === 'unknown' || !String(o.customerEmail).includes('@'));
+            document.getElementById('guestOrdersCount').textContent = guestOrders.length;
         }
 
         // User management functions
@@ -822,7 +1143,7 @@
                                 💰 Process Refund
                             </button>
                             <button onclick="initiateShipping('${email}')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
-                                📦 Initiate Shipping
+                                📦 Generate Label
                             </button>
                             <button onclick="contactUser('${email}')" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors">
                                 📧 Contact User
@@ -857,7 +1178,41 @@
         }
         
         function initiateShipping(email) {
-            alert(`Initiating shipping for: ${email}\n\nThis would:\n- Generate shipping label\n- Update tracking information\n- Send tracking email to user\n- Update order status`);
+            try {
+                // Retrieve last shipping selection saved from payment page
+                const saved = JSON.parse(localStorage.getItem('lastSelectedShipping') || 'null');
+                if (!saved || !saved.selection || !saved.address) {
+                    alert('No recent shipping selection found. Ask the customer to calculate shipping on the payment page first.');
+                    return;
+                }
+
+                const payload = {
+                    selectedServiceId: saved.selection.id,
+                    recipient: {
+                        firstName: saved.address.firstName,
+                        lastName: saved.address.lastName,
+                        address1: saved.address.address1,
+                        address2: saved.address.address2,
+                        city: saved.address.city,
+                        state: saved.address.state,
+                        postalCode: saved.address.postalCode,
+                        country: saved.address.country,
+                        email: email
+                    },
+                    parcel: {
+                        lengthCm: 33,
+                        widthCm: 33,
+                        heightCm: 3,
+                        weightKg: 0.8
+                    }
+                };
+
+                // Label generation via server has been removed. Shipping is tracked with the "Mark Shipping Done" flow.
+                alert('Server label generation is disabled. Use "Mark Shipping Done" in order views.');
+            } catch (e) {
+                console.error('Initiate shipping error:', e);
+                alert('Unexpected error while generating the label.');
+            }
         }
         
         function contactUser(email) {
@@ -906,6 +1261,93 @@
         
         // Make debug function globally available
         window.debugUserData = debugUserData;
+
+        // Function to recalculate campaign stats from orders
+        window.recalculateCampaignStats = function() {
+            console.log('=== RECALCULATING CAMPAIGN STATS ===');
+            
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            
+            // Group orders by recordId
+            const ordersByRecord = {};
+            orders.forEach(order => {
+                if (!ordersByRecord[order.recordId]) {
+                    ordersByRecord[order.recordId] = [];
+                }
+                ordersByRecord[order.recordId].push(order);
+            });
+            
+            // Update each record with actual order data
+            let updatedRecords = 0;
+            records.forEach(record => {
+                const recordOrders = ordersByRecord[record.id] || [];
+                const actualBackers = recordOrders.length;
+                const actualRaised = recordOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
+                
+                if (record.backers !== actualBackers || record.raised !== actualRaised) {
+                    record.backers = actualBackers;
+                    record.raised = actualRaised;
+                    updatedRecords++;
+                    console.log(`Updated ${record.albumTitle}: ${actualBackers} backers, €${actualRaised} raised`);
+                }
+            });
+            
+            if (updatedRecords > 0) {
+                localStorage.setItem('uploadedRecords', JSON.stringify(records));
+                console.log(`Updated ${updatedRecords} campaign records`);
+            }
+            
+            alert(`Campaign stats recalculated!\n\nUpdated ${updatedRecords} campaigns with actual order data.\n\nClick "Refresh Data" to see updated stats.`);
+        };
+
+        // Function to clean up test users and orders
+        window.cleanupTestData = function() {
+            console.log('=== CLEANING UP TEST DATA ===');
+            
+            // Remove orders with test emails
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const testEmails = ['your-email@example.com', 'your-real-email@example.com', 'test@example.com', 'example@test.com'];
+            const cleanedOrders = orders.filter(o => !testEmails.includes(o.customerEmail));
+            
+            if (orders.length !== cleanedOrders.length) {
+                localStorage.setItem('orders', JSON.stringify(cleanedOrders));
+                console.log(`Removed ${orders.length - cleanedOrders.length} test orders`);
+            }
+            
+            // Remove admin user records with test emails
+            const adminKeys = Object.keys(localStorage).filter(key => key.startsWith('admin_user_'));
+            let removedAdminUsers = 0;
+            adminKeys.forEach(key => {
+                try {
+                    const userRecord = JSON.parse(localStorage.getItem(key));
+                    if (testEmails.includes(userRecord.email)) {
+                        localStorage.removeItem(key);
+                        removedAdminUsers++;
+                        console.log(`Removed admin user record: ${userRecord.email}`);
+                    }
+                } catch (e) {
+                    console.warn('Error processing admin user record:', key, e);
+                }
+            });
+            
+            // Clean up userData entries
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            let removedUserData = 0;
+            testEmails.forEach(email => {
+                if (userData[email]) {
+                    delete userData[email];
+                    removedUserData++;
+                    console.log(`Removed userData for: ${email}`);
+                }
+            });
+            if (removedUserData > 0) {
+                localStorage.setItem('userData', JSON.stringify(userData));
+            }
+            
+            console.log(`Cleanup complete: ${removedAdminUsers} admin users, ${removedUserData} userData entries, ${orders.length - cleanedOrders.length} orders removed`);
+            alert(`Test data cleaned up!\n\nRemoved:\n- ${orders.length - cleanedOrders.length} test orders\n- ${removedAdminUsers} admin user records\n- ${removedUserData} userData entries\n\nClick "Refresh Data" to see updated dashboard.`);
+        };
 
         // Function to check what user data exists in localStorage
         window.checkAllUserData = function() {
@@ -1266,14 +1708,169 @@ ${record.description || 'No description provided'}
             alert('Dashboard data refreshed!');
         });
 
-        // Admin logout
-        document.getElementById('logoutAdminBtn').addEventListener('click', function() {
-            if (confirm('Are you sure you want to log out of admin panel?')) {
-                localStorage.removeItem('adminSession');
-                alert('Logged out successfully.');
-                window.location.href = 'login.html';
-            }
-        });
+        // Admin logout is handled only via inline onclick -> handleLogoutClick()
+
+        // NEW: View Orders modal with per-order label actions
+        function viewUserOrders(email) {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const userOrders = orders.filter(o => o.customerEmail === email);
+
+            const backdrop = document.createElement('div');
+            backdrop.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            backdrop.onclick = function(e) { if (e.target === backdrop) document.body.removeChild(backdrop); };
+
+            // Sort orders: waiting first, then processed
+            const sortedOrders = userOrders.sort((a, b) => {
+                if (!!a.shipped === !!b.shipped) {
+                    return new Date(b.timestamp) - new Date(a.timestamp); // Newest first
+                }
+                return a.shipped ? 1 : -1; // Waiting orders first
+            });
+
+            const list = sortedOrders.map(o => `
+                <div class="bg-black bg-opacity-30 rounded-xl p-4 mb-3 border-l-4 ${o.shipped ? 'border-green-400' : 'border-yellow-400'}">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="font-semibold">${o.recordTitle} <span class="text-gray-400">(${o.recordId})</span></div>
+                            <div class="text-sm text-gray-400">€${o.amount} • ${new Date(o.timestamp).toLocaleString()}</div>
+                            ${o.recipient ? `<div class="text-xs text-gray-400 mt-1">${o.recipient.firstName || ''} ${o.recipient.lastName || ''} — ${o.recipient.address1 || ''} ${o.recipient.address2 || ''}, ${o.recipient.postalCode || ''} ${o.recipient.city || ''}, ${o.recipient.country || ''}</div>` : ''}
+                            <div class="text-sm ${o.shipped ? 'text-green-400' : 'text-yellow-400'}">${o.shipped ? '✅ Shipping done' : '⏳ Waiting for shipping'}</div>
+                            ${o.shipping ? `<div class="text-xs text-gray-500 mt-1">Shipping: ${o.shipping.carrier} ${o.shipping.serviceName}</div>` : ''}
+                        </div>
+                        <div class="flex flex-col gap-2 ml-4">
+                            <button ${o.shipped ? 'disabled' : ''} onclick="markOrderShipped('${email}','${o.id}')" class="px-3 py-1 rounded text-sm ${o.shipped ? 'bg-gray-600 text-gray-300' : 'bg-green-500 hover:bg-green-600 text-white'}">${o.shipped ? 'Shipping Done' : 'Mark Shipping Done'}</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            const waitingCount = userOrders.filter(o => !o.shipped).length;
+            const processedCount = userOrders.filter(o => o.shipped).length;
+
+            backdrop.innerHTML = `
+                <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-xl font-bold">Orders for ${email}</h2>
+                            <div class="text-sm text-gray-400 mt-1">
+                                ${waitingCount} waiting • ${processedCount} processed • ${userOrders.length} total
+                            </div>
+                        </div>
+                        <button onclick="document.body.removeChild(this.closest('.fixed'))" class="text-white hover:text-pink-400 text-2xl">&times;</button>
+                    </div>
+                    ${userOrders.length ? list : '<div class="text-gray-300">No orders found for this user.</div>'}
+                </div>
+            `;
+            document.body.appendChild(backdrop);
+        }
+
+        function markOrderShipped(email, orderId) {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const idx = orders.findIndex(o => o.id === orderId && o.customerEmail === email);
+            if (idx === -1) { alert('Order not found'); return; }
+            orders[idx].shipped = true;
+            localStorage.setItem('orders', JSON.stringify(orders));
+            loadUsersData();
+            // Refresh modal
+            document.querySelectorAll('.fixed.inset-0').forEach(el => el.remove());
+            viewUserOrders(email);
+        }
+
+        // NEW: Guest Orders modal
+        function viewGuestOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const guests = orders.filter(o => o.isGuest || !o.customerEmail || o.customerEmail === 'unknown' || !o.customerEmail.includes('@'));
+
+            const backdrop = document.createElement('div');
+            backdrop.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            backdrop.onclick = function(e) { if (e.target === backdrop) document.body.removeChild(backdrop); };
+
+            const list = guests.map(o => `
+                <div class="bg-black bg-opacity-30 rounded-xl p-4 mb-3 border-l-4 ${o.shipped ? 'border-green-400' : 'border-yellow-400'}">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="font-semibold">${o.recordTitle} <span class="text-gray-400">(${o.recordId})</span></div>
+                            <div class="text-sm text-gray-400">€${o.amount} • ${new Date(o.timestamp).toLocaleString()}</div>
+                            <div class="text-xs text-gray-500 mt-1">Guest order</div>
+                            ${o.recipient ? `<div class=\"text-xs text-gray-400 mt-1\">${o.recipient.firstName || ''} ${o.recipient.lastName || ''} — ${o.recipient.address1 || ''} ${o.recipient.address2 || ''}, ${o.recipient.postalCode || ''} ${o.recipient.city || ''}, ${o.recipient.country || ''}</div>` : ''}
+                            <div class="text-sm ${o.shipped ? 'text-green-400' : 'text-yellow-400'}">${o.shipped ? '✅ Shipping done' : '⏳ Waiting for shipping'}</div>
+                        </div>
+                        <div class="flex flex-col gap-2 ml-4">
+                            <button ${o.shipped ? 'disabled' : ''} onclick="markGuestOrderShipped('${o.id}')" class="px-3 py-1 rounded text-sm ${o.shipped ? 'bg-gray-600 text-gray-300' : 'bg-green-500 hover:bg-green-600 text-white'}">${o.shipped ? 'Shipping Done' : 'Mark Shipping Done'}</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            backdrop.innerHTML = `
+                <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-xl font-bold">Guest Orders</h2>
+                            <div class="text-sm text-gray-400 mt-1">${guests.length} guest orders</div>
+                        </div>
+                        <button onclick="document.body.removeChild(this.closest('.fixed'))" class="text-white hover:text-pink-400 text-2xl">&times;</button>
+                    </div>
+                    ${guests.length ? list : '<div class="text-gray-300">No guest orders found.</div>'}
+                </div>
+            `;
+            document.body.appendChild(backdrop);
+        }
+
+        // Open guest orders for a specific guest key from the Guests Database table
+        function viewGuestOrdersForKey(safeKey) {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const guests = orders.filter(o => o.isGuest || !o.customerEmail || o.customerEmail === 'unknown' || !o.customerEmail.includes('@'));
+            const match = guests.filter(o => {
+                const email = (o.contactEmail || '').trim();
+                const key = email || `guest_${(o.recipient?.firstName||'').toLowerCase()}_${(o.recipient?.lastName||'').toLowerCase()}_${(o.recipient?.postalCode||'').toLowerCase()}`;
+                const sk = key.replace(/[^a-zA-Z0-9_\-]/g, '_');
+                return sk === safeKey;
+            });
+            if (match.length === 0) { alert('No orders found for this guest.'); return; }
+            // Temporarily reuse the same modal renderer by building a tiny container and injecting list
+            const backdrop = document.createElement('div');
+            backdrop.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            backdrop.onclick = function(e) { if (e.target === backdrop) document.body.removeChild(backdrop); };
+            const list = match.sort((a,b)=> new Date(b.timestamp)-new Date(a.timestamp)).map(o => `
+                <div class=\"bg-black bg-opacity-30 rounded-xl p-4 mb-3 border-l-4 ${o.shipped ? 'border-green-400' : 'border-yellow-400'}\">
+                    <div class=\"flex justify-between items-start\">
+                        <div class=\"flex-1\">
+                            <div class=\"font-semibold\">${o.recordTitle} <span class=\"text-gray-400\">(${o.recordId})</span></div>
+                            <div class=\"text-sm text-gray-400\">€${o.amount} • ${new Date(o.timestamp).toLocaleString()}</div>
+                            ${(o.recipient ? `<div class=\\\"text-xs text-gray-400 mt-1\\\">${o.recipient.firstName || ''} ${o.recipient.lastName || ''} — ${o.recipient.address1 || ''} ${o.recipient.address2 || ''}, ${o.recipient.postalCode || ''} ${o.recipient.city || ''}, ${o.recipient.country || ''}</div>` : '')}
+                            <div class=\"text-sm ${o.shipped ? 'text-green-400' : 'text-yellow-400'}\">${o.shipped ? '✅ Shipping done' : '⏳ Waiting for shipping'}</div>
+                        </div>
+                        <div class=\"flex flex-col gap-2 ml-4\">
+                            <button ${o.shipped ? 'disabled' : ''} onclick=\"markGuestOrderShipped('${o.id}')\" class=\"px-3 py-1 rounded text-sm ${o.shipped ? 'bg-gray-600 text-gray-300' : 'bg-green-500 hover:bg-green-600 text-white'}\">${o.shipped ? 'Shipping Done' : 'Mark Shipping Done'}</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            backdrop.innerHTML = `
+                <div class=\"bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto\">
+                    <div class=\"flex justify-between items-center mb-4\">
+                        <div>
+                            <h2 class=\"text-xl font-bold\">Guest Orders</h2>
+                            <div class=\"text-sm text-gray-400 mt-1\">${match.filter(o=>!o.shipped).length} waiting • ${match.filter(o=>o.shipped).length} processed • ${match.length} total</div>
+                        </div>
+                        <button onclick=\"document.body.removeChild(this.closest('.fixed'))\" class=\"text-white hover:text-pink-400 text-2xl\">&times;</button>
+                    </div>
+                    ${list}
+                </div>`;
+            document.body.appendChild(backdrop);
+        }
+
+        function markGuestOrderShipped(orderId) {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx === -1) { alert('Order not found'); return; }
+            orders[idx].shipped = true;
+            localStorage.setItem('orders', JSON.stringify(orders));
+            // Refresh the modal by re-opening Guest Orders
+            document.querySelectorAll('.fixed.inset-0').forEach(el => el.remove());
+            viewGuestOrders();
+        }
     </script>
 </body>
 </html>

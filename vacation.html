@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporarily Closed - Wax Encounters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(0,0,0,0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.15); }
+        body { background: radial-gradient(1200px 800px at 50% -10%, rgba(199, 122, 180, 0.25), transparent), #000; }
+        .main-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200vh;
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+                url('images/background image.jpeg');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center p-6">
+    <div class="main-background"></div>
+    <div class="max-w-3xl w-full glass rounded-2xl p-8 text-center">
+        <div class="mx-auto mb-6 w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center">
+            <svg class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 8c-4.418 0-8 3.582-8 8 0 1.657.5 3.194 1.354 4.472A9.956 9.956 0 0012 22a9.956 9.956 0 006.646-2.528A7.963 7.963 0 0020 16c0-4.418-3.582-8-8-8z" />
+            </svg>
+        </div>
+        <h1 class="text-3xl font-extrabold mb-2">Welcome to Wax Encounters — Records from outer space</h1>
+        <p class="text-lg text-gray-200 mb-2">Sorry, we are temporarily closed.</p>
+        <p id="vacUntil" class="text-gray-300 mb-6">We will be back on —</p>
+
+        <div class="mt-6">
+            <button id="vacAdminBtn" class="inline-block px-6 py-3 rounded-lg font-semibold bg-yellow-400 hover:bg-yellow-300 text-black shadow-lg ring-2 ring-yellow-300 focus:outline-none focus:ring-4 focus:ring-yellow-200 transition">Admin Log In</button>
+        </div>
+
+        <div id="campaigns" class="text-left mt-8">
+            <h2 class="text-xl font-bold text-pink-400 mb-3">Active Crowdfunding Campaigns</h2>
+            <div id="campaignsList" class="space-y-3"></div>
+            <p class="text-sm text-gray-400 mt-3">Orders are disabled during vacation mode.</p>
+        </div>
+    </div>
+
+    <script>
+        // Render until date
+        (function() {
+            try {
+                const vm = JSON.parse(localStorage.getItem('vacationMode') || 'null');
+                const p = document.getElementById('vacUntil');
+                if (vm && vm.active && vm.until) {
+                    const dt = new Date(vm.until);
+                    p.textContent = `We will be back on ${dt.toLocaleString()}.`;
+                } else {
+                    p.textContent = 'We will be back soon.';
+                }
+            } catch (e) {}
+        })();
+
+        // Admin login modal from vacation page
+        (function() {
+            function showAdminLoginModal() {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4';
+                backdrop.onclick = function(e){ if(e.target===backdrop) document.body.removeChild(backdrop); };
+
+                const container = document.createElement('div');
+                container.className = 'glass rounded-2xl p-6 w-full max-w-md';
+                container.innerHTML = `
+                    <h2 class="text-xl font-bold mb-4 text-center">Admin Login</h2>
+                    <div class="space-y-3">
+                        <input id="adminUsername" type="text" placeholder="Admin username" class="w-full px-3 py-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15">
+                        <input id="adminPassword" type="password" placeholder="Admin password" class="w-full px-3 py-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15">
+                    </div>
+                    <div class="flex justify-between items-center mt-5">
+                        <button id="adminCreateBtn" class="text-sm text-gray-300 hover:text-white">Create Admin</button>
+                        <div class="flex gap-2">
+                            <button id="adminCancelBtn" class="px-4 py-2 rounded-lg text-sm bg-gray-600 hover:bg-gray-500 text-white">Cancel</button>
+                            <button id="adminLoginBtn" class="px-4 py-2 rounded-lg text-sm bg-pink-500 hover:bg-pink-600 text-white font-semibold">Log In</button>
+                        </div>
+                    </div>
+                `;
+                backdrop.appendChild(container);
+                document.body.appendChild(backdrop);
+
+                const cancelBtn = container.querySelector('#adminCancelBtn');
+                const loginBtn = container.querySelector('#adminLoginBtn');
+                const createBtn = container.querySelector('#adminCreateBtn');
+
+                cancelBtn.onclick = () => document.body.removeChild(backdrop);
+                loginBtn.onclick = () => {
+                    try {
+                        const username = container.querySelector('#adminUsername').value.trim();
+                        const password = container.querySelector('#adminPassword').value.trim();
+                        const adminDataRaw = localStorage.getItem('adminAccount');
+                        if (!adminDataRaw) { alert('No admin account found. Click "Create Admin" first.'); return; }
+                        const adminData = JSON.parse(adminDataRaw);
+                        if (adminData && adminData.username === username && adminData.password === password) {
+                            localStorage.setItem('adminSession', 'true');
+                            alert('Admin login successful!');
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            alert('Invalid admin credentials.');
+                        }
+                    } catch (e) {
+                        console.error('Admin login error:', e);
+                        alert('Unexpected error during admin login.');
+                    }
+                };
+                createBtn.onclick = () => {
+                    try {
+                        const masterKey = prompt('Enter master admin key to create admin account:');
+                        if (masterKey !== 'K9mX7#pL2$vR8@nQ5') { if (masterKey!==null) alert('Invalid master key.'); return; }
+                        const username = prompt('Choose admin username:'); if (!username) return;
+                        const password = prompt('Choose admin password (min 8 chars):'); if (!password || password.length < 8) { alert('Password too short.'); return; }
+                        const confirmPw = prompt('Confirm admin password:'); if (confirmPw !== password) { alert('Passwords do not match.'); return; }
+                        const adminAccount = { username, password, role: 'admin', createdAt: new Date().toISOString() };
+                        localStorage.setItem('adminAccount', JSON.stringify(adminAccount));
+                        localStorage.setItem('adminSession', 'true');
+                        alert('Admin account created. Redirecting to dashboard.');
+                        window.location.href = 'admin-dashboard.html';
+                    } catch (e) {
+                        console.error('Admin create error:', e);
+                        alert('Failed to create admin account.');
+                    }
+                };
+            }
+
+            const btn = document.getElementById('vacAdminBtn');
+            if (btn) btn.addEventListener('click', showAdminLoginModal);
+
+            // Auto-open when redirected with ?admin=1
+            const params = new URLSearchParams(location.search);
+            if (params.get('admin') === '1') {
+                setTimeout(showAdminLoginModal, 50);
+            }
+        })();
+
+        // List active crowdfunding campaigns without purchase actions
+        (function() {
+            const list = document.getElementById('campaignsList');
+            const records = JSON.parse(localStorage.getItem('uploadedRecords') || '[]');
+            const campaigns = records.filter(r => r.type === 'crowdfunding' && r.status !== 'ended');
+            if (campaigns.length === 0) {
+                list.innerHTML = '<div class="text-gray-400">No active campaigns at the moment.</div>';
+                return;
+            }
+            campaigns.forEach(c => {
+                const progress = Math.min(((c.raised || 0) / (c.fundingGoal || 1)) * 100, 100);
+                const div = document.createElement('div');
+                div.className = 'p-4 bg-white bg-opacity-5 rounded-xl';
+                div.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <div class="font-semibold">${c.albumTitle}</div>
+                            <div class="text-sm text-gray-400">by ${c.artistName}</div>
+                        </div>
+                        <div class="text-right text-sm text-gray-300">€${c.raised || 0} / €${c.fundingGoal || 0}</div>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                        <div class="bg-gradient-to-r from-pink-500 to-purple-500 h-2" style="width:${progress}%"></div>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        })();
+    </script>
+</body>
+</html>
+
+

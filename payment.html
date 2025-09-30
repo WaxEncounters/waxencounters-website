@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Complete Your Order - Wax Encounters</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/vacation.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -107,6 +108,16 @@
                             </div>
                         </div>
 
+                        <!-- Quantity Selector -->
+                        <div class="mb-4 flex items-center justify-between bg-white bg-opacity-5 rounded-xl p-3 sm:p-4">
+                            <label for="quantity" class="text-sm font-medium">Quantity</label>
+                            <div class="flex items-center gap-2">
+                                <button type="button" id="qtyMinus" class="px-3 py-1 bg-white bg-opacity-10 rounded">−</button>
+                                <input id="quantity" type="number" min="1" value="1" class="w-16 text-center px-2 py-1 bg-white bg-opacity-10 rounded border border-white border-opacity-20">
+                                <button type="button" id="qtyPlus" class="px-3 py-1 bg-white bg-opacity-10 rounded">+</button>
+                            </div>
+                        </div>
+
                         <!-- Campaign Progress (for pre-orders only) -->
                         <div id="campaignProgress" class="mb-6">
                             <div class="flex justify-between items-center mb-2">
@@ -123,7 +134,7 @@
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between">
                                 <span class="text-gray-300">Vinyl Record</span>
-                                <span>€35.00</span>
+                                <span class="items-subtotal">€35.00</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-300">Shipping</span>
@@ -186,6 +197,10 @@
                                     <div>
                                         <label class="block text-xs font-medium text-gray-300 mb-1">Last Name *</label>
                                         <input type="text" name="lastName" required placeholder="Doe" class="w-full px-3 py-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-sm">
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <label for="email" class="block text-xs font-medium text-gray-300 mb-1">Email *</label>
+                                        <input type="email" id="email" name="email" required placeholder="you@example.com" class="w-full px-3 py-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-sm">
                                     </div>
                                 </div>
                             </div>
@@ -279,58 +294,6 @@
                                         <label class="block text-xs font-medium text-gray-300 mb-1">Country *</label>
                                         <select id="shippingCountry" class="w-full px-3 py-2 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 focus:outline-none focus:border-pink-400 focus:bg-opacity-15 transition-all duration-200 text-sm" required>
                                             <option value="">Select Country</option>
-                                            <option value="US">United States</option>
-                                            <option value="CA">Canada</option>
-                                            <option value="GB">United Kingdom</option>
-                                            <option value="DE">Germany</option>
-                                            <option value="FR">France</option>
-                                            <option value="IT">Italy</option>
-                                            <option value="ES">Spain</option>
-                                            <option value="NL">Netherlands</option>
-                                            <option value="BE">Belgium</option>
-                                            <option value="AT">Austria</option>
-                                            <option value="CH">Switzerland</option>
-                                            <option value="SE">Sweden</option>
-                                            <option value="NO">Norway</option>
-                                            <option value="DK">Denmark</option>
-                                            <option value="FI">Finland</option>
-                                            <option value="PL">Poland</option>
-                                            <option value="CZ">Czech Republic</option>
-                                            <option value="HU">Hungary</option>
-                                            <option value="PT">Portugal</option>
-                                            <option value="IE">Ireland</option>
-                                            <option value="LU">Luxembourg</option>
-                                            <option value="MT">Malta</option>
-                                            <option value="CY">Cyprus</option>
-                                            <option value="EE">Estonia</option>
-                                            <option value="LV">Latvia</option>
-                                            <option value="LT">Lithuania</option>
-                                            <option value="SI">Slovenia</option>
-                                            <option value="SK">Slovakia</option>
-                                            <option value="HR">Croatia</option>
-                                            <option value="BG">Bulgaria</option>
-                                            <option value="RO">Romania</option>
-                                            <option value="GR">Greece</option>
-                                            <option value="AU">Australia</option>
-                                            <option value="NZ">New Zealand</option>
-                                            <option value="JP">Japan</option>
-                                            <option value="KR">South Korea</option>
-                                            <option value="SG">Singapore</option>
-                                            <option value="HK">Hong Kong</option>
-                                            <option value="TW">Taiwan</option>
-                                            <option value="TH">Thailand</option>
-                                            <option value="MY">Malaysia</option>
-                                            <option value="ID">Indonesia</option>
-                                            <option value="PH">Philippines</option>
-                                            <option value="VN">Vietnam</option>
-                                            <option value="IN">India</option>
-                                            <option value="BR">Brazil</option>
-                                            <option value="MX">Mexico</option>
-                                            <option value="AR">Argentina</option>
-                                            <option value="CL">Chile</option>
-                                            <option value="CO">Colombia</option>
-                                            <option value="PE">Peru</option>
-                                            <option value="ZA">South Africa</option>
                                         </select>
                                     </div>
                                     
@@ -372,6 +335,23 @@
             </div>
         </section>
     </main>
+
+    <!-- Purchase Confirmation Modal -->
+    <div id="purchaseModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-70"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="glass-card rounded-2xl p-6 sm:p-8 max-w-md w-full text-center">
+                <div class="mx-auto mb-4 w-14 h-14 rounded-full bg-gradient-to-br from-pink-400 to-purple-400 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Thank you for your purchase!</h3>
+                <p class="text-gray-300 mb-6">We will send you an email soon with your tracking.</p>
+                <button id="purchaseModalClose" class="premium-button px-6 py-2 rounded-lg text-black font-semibold">Close</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Check URL parameters and update page content accordingly
@@ -558,16 +538,16 @@
                 orderDetails.innerHTML = `
                     <div class="flex justify-between">
                         <span class="text-gray-300">Vinyl Record</span>
-                        <span>€${record.price.toFixed(2)}</span>
+                        <span class="items-subtotal">€${record.price.toFixed(2)}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-300">Shipping</span>
-                        <span>€5.00</span>
+                        <span class="shipping-cost">€5.00</span>
                     </div>
                     <div class="border-t border-white border-opacity-20 pt-3">
                         <div class="flex justify-between text-lg font-semibold">
                             <span>Total</span>
-                            <span>€${(record.price + 5).toFixed(2)}</span>
+                            <span class="order-total">€${(record.price + 5).toFixed(2)}</span>
                         </div>
                     </div>
                 `;
@@ -621,16 +601,16 @@
                 orderDetails.innerHTML = `
                     <div class="flex justify-between">
                         <span class="text-gray-300">Vinyl Record</span>
-                        <span>€${record.price.toFixed(2)}</span>
+                        <span class="items-subtotal">€${record.price.toFixed(2)}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-300">Shipping</span>
-                        <span>€5.00</span>
+                        <span class="shipping-cost">€5.00</span>
                     </div>
                     <div class="border-t border-white border-opacity-20 pt-3">
                         <div class="flex justify-between text-lg font-semibold">
                             <span>Total</span>
-                            <span>€${(record.price + 5).toFixed(2)}</span>
+                            <span class="order-total">€${(record.price + 5).toFixed(2)}</span>
                         </div>
                     </div>
                 `;
@@ -703,11 +683,16 @@
                 const formData = new FormData(paymentForm);
                 const firstName = formData.get('firstName');
                 const lastName = formData.get('lastName');
+                const email = (formData.get('email') || '').trim();
                 const termsAccepted = document.getElementById('paymentTerms').checked;
                 
                 // Validate required fields
                 if (!firstName || !lastName) {
                     alert('Please fill in your first name and last name');
+                    return;
+                }
+                if (!email) {
+                    alert('Please enter a valid email address');
                     return;
                 }
                 
@@ -766,16 +751,51 @@
                 
                 if (success) {
                     // Store order details
+                    const lastSelected = JSON.parse(localStorage.getItem('lastSelectedShipping') || 'null');
+                    let resolvedEmail = '';
+                    const sessionLoggedIn = !!(window.SecureStorageManager && window.SecureStorageManager.isSessionValid());
+                    try {
+                        resolvedEmail = (document.getElementById('email')?.value || localStorage.getItem('userEmail') || localStorage.getItem('verifiedEmail') || '').trim();
+                        if (!resolvedEmail) {
+                            const cachedData = localStorage.getItem('cachedDisplayData');
+                            if (cachedData) {
+                                const parsed = JSON.parse(cachedData);
+                                resolvedEmail = parsed.email || '';
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Error resolving email:', e);
+                        resolvedEmail = localStorage.getItem('userEmail') || '';
+                    }
                     const orderDetails = {
                         id: 'order_' + Date.now(),
                         customerName: `${firstName} ${lastName}`,
+                        customerEmail: sessionLoggedIn ? (resolvedEmail || 'unknown') : 'unknown',
+                        contactEmail: !sessionLoggedIn ? (resolvedEmail || '') : undefined,
                         recordId: recordId,
                         recordTitle: record.albumTitle,
                         recordArtist: record.artistName,
                         amount: price,
                         type: recordType || record.type,
                         timestamp: new Date().toISOString(),
-                        status: 'completed'
+                        status: 'completed',
+                        isGuest: !sessionLoggedIn,
+                        labelGenerated: false,
+                        trackingNumber: null,
+                        shipmentId: null,
+                        // Persist shipping data with the order (if available)
+                        shipping: lastSelected && lastSelected.method ? {
+                            serviceId: lastSelected.method.id,
+                            carrier: lastSelected.method.carrier,
+                            serviceName: lastSelected.method.serviceName,
+                            price: lastSelected.method.price
+                        } : null,
+                        recipient: lastSelected && lastSelected.recipientAddress ? lastSelected.recipientAddress : {
+                            firstName, lastName,
+                            address1: formData.address1 || '', address2: formData.address2 || '',
+                            city: formData.city || '', state: '', postalCode: formData.zip || '', country: formData.country || ''
+                        },
+                        parcel: lastSelected && lastSelected.parcel ? lastSelected.parcel : { lengthCm: 33, widthCm: 33, heightCm: 3, weightKg: 0.8 }
                     };
                     
                     // Save order to localStorage (in production, this would go to a database)
@@ -783,12 +803,49 @@
                     existingOrders.push(orderDetails);
                     localStorage.setItem('orders', JSON.stringify(existingOrders));
                     
-                    alert(message);
+                    // Update user's total spent in userData (only for logged-in users)
+                    if (sessionLoggedIn && resolvedEmail) {
+                        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                        userData[resolvedEmail] = userData[resolvedEmail] || { preOrders: [], totalSpent: 0 };
+                        userData[resolvedEmail].totalSpent = (userData[resolvedEmail].totalSpent || 0) + price;
+                        userData[resolvedEmail].preOrders = userData[resolvedEmail].preOrders || [];
+                        userData[resolvedEmail].preOrders.push({
+                            recordId: recordId,
+                            recordTitle: record.albumTitle,
+                            amount: price,
+                            timestamp: new Date().toISOString(),
+                            status: 'completed'
+                        });
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        console.log('Updated user total spent:', userData[resolvedEmail].totalSpent);
+                    }
                     
-                    // Redirect to success page or account
+                    // Show purchase confirmation modal
+                    const modal = document.getElementById('purchaseModal');
+                    const modalBtn = document.getElementById('purchaseModalClose');
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                        if (modalBtn) {
+                            modalBtn.onclick = () => modal.classList.add('hidden');
+                        }
+                    }
+
+                    // Ensure guest users do not appear logged in after purchase
+                    try {
+                        if (window.SecureStorageManager) {
+                            window.SecureStorageManager.clearSession();
+                        }
+                        localStorage.removeItem('userEmail');
+                        localStorage.removeItem('sessionId');
+                    } catch (e) {
+                        console.warn('Guest logout cleanup failed:', e);
+                    }
+
+                    // Redirect: guests to home, logged-in users to account (based on session state)
                     setTimeout(() => {
-                        window.location.href = 'account.html';
-                    }, 2000);
+                        const stillLoggedIn = !!(window.SecureStorageManager && window.SecureStorageManager.isSessionValid());
+                        window.location.href = stillLoggedIn ? 'account.html' : 'index.html';
+                    }, 2200);
                 } else {
                     alert(message);
                 }
@@ -883,6 +940,12 @@
                     return;
                 }
 
+                // Quantity and derived parcel weight/dimensions
+                const quantity = this.getQuantity();
+                const perRecordWeightKg = 0.8;
+                const totalWeightKg = Math.max(perRecordWeightKg * quantity, perRecordWeightKg);
+                const heightCm = quantity > 10 ? 15 : (quantity > 5 ? 7 : 3.5);
+
                 // Show loading state
                 const calculateBtn = document.getElementById('calculateShippingBtn');
                 const originalText = calculateBtn.textContent;
@@ -890,9 +953,35 @@
                 calculateBtn.disabled = true;
 
                 try {
-                    // Use EasyPost API for real shipping rates
-                    const shippingRates = await this.getEasyPostShippingRates(address);
-                    
+                    // Call backend rates endpoint (Packlink proxy)
+                    const body = {
+                        recipient: {
+                            firstName: address.firstName,
+                            lastName: address.lastName,
+                            address1: address.address1,
+                            address2: address.address2 || '',
+                            city: address.city,
+                            state: address.state,
+                            postalCode: address.postalCode,
+                            country: address.country
+                        },
+                        parcel: {
+                            lengthCm: 33,
+                            widthCm: 33,
+                            heightCm: heightCm,
+                            weightKg: totalWeightKg
+                        },
+                        origin: {
+                            company: 'Wax Encounters',
+                            address1: 'via Monte Sabotino 10',
+                            city: 'Bovisio Masciago',
+                            postalCode: '20813',
+                            country: 'IT',
+                            phone: '3474211714'
+                        }
+                    };
+                    // Removed server rates call; use fixed-rate calculator instead
+                    const shippingRates = this.getFixedRatesForAddress(address, totalWeightKg, heightCm);
                     this.displayShippingOptions(shippingRates);
                     this.hideShippingError();
                     
@@ -1106,14 +1195,37 @@
                     radio.checked = true;
                 }
                 
-                // Update order total
+                // Update order total using current quantity
                 this.updateOrderTotal();
+
+                // Persist selection and address for admin label generation
+                try {
+                    const address = this.getShippingAddress();
+                    const quantity = this.getQuantity();
+                    const heightCm = quantity > 10 ? 15 : (quantity > 5 ? 7 : 3.5);
+                    const payload = {
+                        selection: {
+                            id: rate.id,
+                            carrier: rate.carrier,
+                            serviceName: rate.serviceName || rate.service,
+                            price: rate.cost
+                        },
+                        recipientAddress: address,
+                        parcel: { lengthCm: 33, widthCm: 33, heightCm: heightCm, weightKg: Math.max(0.8 * quantity, 0.8) },
+                        quantity
+                    };
+                    localStorage.setItem('lastSelectedShipping', JSON.stringify(payload));
+                } catch (e) {
+                    console.warn('Could not persist shipping selection:', e);
+                }
             }
 
             updateOrderTotal() {
                 // Get the record price
                 const recordPrice = this.getRecordPrice();
-                const total = recordPrice + this.shippingCost;
+                const quantity = this.getQuantity();
+                const itemsSubtotal = recordPrice * quantity;
+                const total = itemsSubtotal + this.shippingCost;
                 
                 // Update shipping cost display
                 const shippingElements = document.querySelectorAll('.shipping-cost');
@@ -1121,6 +1233,12 @@
                     el.textContent = `€${this.shippingCost.toFixed(2)}`;
                 });
                 
+                // Update items subtotal
+                const itemsEls = document.querySelectorAll('.items-subtotal');
+                itemsEls.forEach(el => {
+                    el.textContent = `€${itemsSubtotal.toFixed(2)}`;
+                });
+
                 // Update total display
                 const totalElements = document.querySelectorAll('.order-total');
                 totalElements.forEach(el => {
@@ -1143,6 +1261,12 @@
                 
                 // Fallback to default price
                 return 35;
+            }
+
+            getQuantity() {
+                const input = document.getElementById('quantity');
+                const value = Number(input?.value || 1);
+                return Math.max(1, Math.floor(value));
             }
 
             showShippingError(message) {
@@ -1171,6 +1295,70 @@
         let shippingCalculator;
         document.addEventListener('DOMContentLoaded', function() {
             shippingCalculator = new ShippingCalculator();
+            // Populate country list fully
+            const countrySelect = document.getElementById('shippingCountry');
+            if (countrySelect && countrySelect.options.length <= 1) {
+                // Ensure select text is visible
+                countrySelect.style.color = '#ffffff';
+                countrySelect.style.backgroundColor = 'rgba(255,255,255,0.10)';
+                const countries = [
+                    { code: 'AF', name: 'Afghanistan' },{ code: 'AL', name: 'Albania' },{ code: 'DZ', name: 'Algeria' },{ code: 'AD', name: 'Andorra' },{ code: 'AO', name: 'Angola' },{ code: 'AG', name: 'Antigua and Barbuda' },{ code: 'AR', name: 'Argentina' },{ code: 'AM', name: 'Armenia' },{ code: 'AU', name: 'Australia' },{ code: 'AT', name: 'Austria' },{ code: 'AZ', name: 'Azerbaijan' },
+                    { code: 'BS', name: 'Bahamas' },{ code: 'BH', name: 'Bahrain' },{ code: 'BD', name: 'Bangladesh' },{ code: 'BB', name: 'Barbados' },{ code: 'BY', name: 'Belarus' },{ code: 'BE', name: 'Belgium' },{ code: 'BZ', name: 'Belize' },{ code: 'BJ', name: 'Benin' },{ code: 'BT', name: 'Bhutan' },{ code: 'BO', name: 'Bolivia' },{ code: 'BA', name: 'Bosnia and Herzegovina' },{ code: 'BW', name: 'Botswana' },{ code: 'BR', name: 'Brazil' },{ code: 'BN', name: 'Brunei' },{ code: 'BG', name: 'Bulgaria' },{ code: 'BF', name: 'Burkina Faso' },{ code: 'BI', name: 'Burundi' },
+                    { code: 'KH', name: 'Cambodia' },{ code: 'CM', name: 'Cameroon' },{ code: 'CA', name: 'Canada' },{ code: 'CV', name: 'Cape Verde' },{ code: 'CF', name: 'Central African Republic' },{ code: 'TD', name: 'Chad' },{ code: 'CL', name: 'Chile' },{ code: 'CN', name: 'China' },{ code: 'CO', name: 'Colombia' },{ code: 'KM', name: 'Comoros' },{ code: 'CG', name: 'Congo' },{ code: 'CR', name: 'Costa Rica' },{ code: 'HR', name: 'Croatia' },{ code: 'CU', name: 'Cuba' },{ code: 'CY', name: 'Cyprus' },{ code: 'CZ', name: 'Czech Republic' },
+                    { code: 'DK', name: 'Denmark' },{ code: 'DJ', name: 'Djibouti' },{ code: 'DM', name: 'Dominica' },{ code: 'DO', name: 'Dominican Republic' },
+                    { code: 'EC', name: 'Ecuador' },{ code: 'EG', name: 'Egypt' },{ code: 'SV', name: 'El Salvador' },{ code: 'GQ', name: 'Equatorial Guinea' },{ code: 'ER', name: 'Eritrea' },{ code: 'EE', name: 'Estonia' },{ code: 'SZ', name: 'Eswatini' },{ code: 'ET', name: 'Ethiopia' },
+                    { code: 'FJ', name: 'Fiji' },{ code: 'FI', name: 'Finland' },{ code: 'FR', name: 'France' },
+                    { code: 'GA', name: 'Gabon' },{ code: 'GM', name: 'Gambia' },{ code: 'GE', name: 'Georgia' },{ code: 'DE', name: 'Germany' },{ code: 'GH', name: 'Ghana' },{ code: 'GR', name: 'Greece' },{ code: 'GD', name: 'Grenada' },{ code: 'GT', name: 'Guatemala' },{ code: 'GN', name: 'Guinea' },{ code: 'GW', name: 'Guinea-Bissau' },{ code: 'GY', name: 'Guyana' },
+                    { code: 'HT', name: 'Haiti' },{ code: 'HN', name: 'Honduras' },{ code: 'HK', name: 'Hong Kong' },{ code: 'HU', name: 'Hungary' },
+                    { code: 'IS', name: 'Iceland' },{ code: 'IN', name: 'India' },{ code: 'ID', name: 'Indonesia' },{ code: 'IR', name: 'Iran' },{ code: 'IQ', name: 'Iraq' },{ code: 'IE', name: 'Ireland' },{ code: 'IL', name: 'Israel' },{ code: 'IT', name: 'Italy' },
+                    { code: 'JM', name: 'Jamaica' },{ code: 'JP', name: 'Japan' },{ code: 'JO', name: 'Jordan' },
+                    { code: 'KZ', name: 'Kazakhstan' },{ code: 'KE', name: 'Kenya' },{ code: 'KI', name: 'Kiribati' },{ code: 'KR', name: 'South Korea' },{ code: 'KW', name: 'Kuwait' },{ code: 'KG', name: 'Kyrgyzstan' },
+                    { code: 'LA', name: 'Laos' },{ code: 'LV', name: 'Latvia' },{ code: 'LB', name: 'Lebanon' },{ code: 'LS', name: 'Lesotho' },{ code: 'LR', name: 'Liberia' },{ code: 'LY', name: 'Libya' },{ code: 'LI', name: 'Liechtenstein' },{ code: 'LT', name: 'Lithuania' },{ code: 'LU', name: 'Luxembourg' },
+                    { code: 'MO', name: 'Macao' },{ code: 'MG', name: 'Madagascar' },{ code: 'MW', name: 'Malawi' },{ code: 'MY', name: 'Malaysia' },{ code: 'MV', name: 'Maldives' },{ code: 'ML', name: 'Mali' },{ code: 'MT', name: 'Malta' },{ code: 'MH', name: 'Marshall Islands' },{ code: 'MR', name: 'Mauritania' },{ code: 'MU', name: 'Mauritius' },{ code: 'MX', name: 'Mexico' },{ code: 'FM', name: 'Micronesia' },{ code: 'MD', name: 'Moldova' },{ code: 'MC', name: 'Monaco' },{ code: 'MN', name: 'Mongolia' },{ code: 'ME', name: 'Montenegro' },{ code: 'MA', name: 'Morocco' },{ code: 'MZ', name: 'Mozambique' },
+                    { code: 'MM', name: 'Myanmar' },
+                    { code: 'NA', name: 'Namibia' },{ code: 'NR', name: 'Nauru' },{ code: 'NP', name: 'Nepal' },{ code: 'NL', name: 'Netherlands' },{ code: 'NZ', name: 'New Zealand' },{ code: 'NI', name: 'Nicaragua' },{ code: 'NE', name: 'Niger' },{ code: 'NG', name: 'Nigeria' },{ code: 'MK', name: 'North Macedonia' },{ code: 'NO', name: 'Norway' },
+                    { code: 'OM', name: 'Oman' },
+                    { code: 'PK', name: 'Pakistan' },{ code: 'PW', name: 'Palau' },{ code: 'PA', name: 'Panama' },{ code: 'PG', name: 'Papua New Guinea' },{ code: 'PY', name: 'Paraguay' },{ code: 'PE', name: 'Peru' },{ code: 'PH', name: 'Philippines' },{ code: 'PL', name: 'Poland' },{ code: 'PT', name: 'Portugal' },
+                    { code: 'QA', name: 'Qatar' },
+                    { code: 'RO', name: 'Romania' },{ code: 'RU', name: 'Russia' },{ code: 'RW', name: 'Rwanda' },
+                    { code: 'KN', name: 'Saint Kitts and Nevis' },{ code: 'LC', name: 'Saint Lucia' },{ code: 'VC', name: 'Saint Vincent and the Grenadines' },{ code: 'WS', name: 'Samoa' },{ code: 'SM', name: 'San Marino' },{ code: 'ST', name: 'Sao Tome and Principe' },{ code: 'SA', name: 'Saudi Arabia' },{ code: 'SN', name: 'Senegal' },{ code: 'RS', name: 'Serbia' },{ code: 'SC', name: 'Seychelles' },{ code: 'SL', name: 'Sierra Leone' },{ code: 'SG', name: 'Singapore' },{ code: 'SK', name: 'Slovakia' },{ code: 'SI', name: 'Slovenia' },{ code: 'SB', name: 'Solomon Islands' },{ code: 'SO', name: 'Somalia' },{ code: 'ZA', name: 'South Africa' },{ code: 'ES', name: 'Spain' },{ code: 'LK', name: 'Sri Lanka' },{ code: 'SD', name: 'Sudan' },{ code: 'SR', name: 'Suriname' },{ code: 'SE', name: 'Sweden' },{ code: 'CH', name: 'Switzerland' },{ code: 'SY', name: 'Syria' },
+                    { code: 'TW', name: 'Taiwan' },{ code: 'TJ', name: 'Tajikistan' },{ code: 'TZ', name: 'Tanzania' },{ code: 'TH', name: 'Thailand' },{ code: 'TL', name: 'Timor-Leste' },{ code: 'TG', name: 'Togo' },{ code: 'TO', name: 'Tonga' },{ code: 'TT', name: 'Trinidad and Tobago' },{ code: 'TN', name: 'Tunisia' },{ code: 'TR', name: 'Turkey' },{ code: 'TM', name: 'Turkmenistan' },{ code: 'TV', name: 'Tuvalu' },
+                    { code: 'UG', name: 'Uganda' },{ code: 'UA', name: 'Ukraine' },{ code: 'AE', name: 'United Arab Emirates' },{ code: 'GB', name: 'United Kingdom' },{ code: 'US', name: 'United States' },{ code: 'UY', name: 'Uruguay' },{ code: 'UZ', name: 'Uzbekistan' },
+                    { code: 'VU', name: 'Vanuatu' },{ code: 'VA', name: 'Vatican City' },{ code: 'VE', name: 'Venezuela' },{ code: 'VN', name: 'Vietnam' },
+                    { code: 'YE', name: 'Yemen' },{ code: 'ZM', name: 'Zambia' },{ code: 'ZW', name: 'Zimbabwe' }
+                ];
+                countries.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.code;
+                    opt.textContent = c.name;
+                    // Make dropdown list text readable
+                    opt.style.color = '#000000';
+                    countrySelect.appendChild(opt);
+                });
+                // Style the placeholder option slightly dimmer
+                if (countrySelect.options[0]) {
+                    countrySelect.options[0].style.color = '#bbbbbb';
+                }
+            }
+            // Quantity controls
+            const qtyInput = document.getElementById('quantity');
+            const qtyMinus = document.getElementById('qtyMinus');
+            const qtyPlus = document.getElementById('qtyPlus');
+            function onQtyChange() {
+                // Recompute totals with current shipping selection
+                shippingCalculator.updateOrderTotal();
+            }
+            if (qtyInput) qtyInput.addEventListener('input', onQtyChange);
+            if (qtyMinus) qtyMinus.addEventListener('click', () => {
+                const current = Number(qtyInput.value || 1);
+                qtyInput.value = Math.max(1, current - 1);
+                onQtyChange();
+            });
+            if (qtyPlus) qtyPlus.addEventListener('click', () => {
+                const current = Number(qtyInput.value || 1);
+                qtyInput.value = current + 1;
+                onQtyChange();
+            });
             
             // Handle billing address checkbox
             const differentBillingCheckbox = document.getElementById('differentBilling');
